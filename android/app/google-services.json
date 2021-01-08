@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "25472887541",
+    "project_id": "pagos-internet-app",
+    "storage_bucket": "pagos-internet-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25472887541:android:d34a96db498ac8959f73bc",
+        "android_client_info": {
+          "package_name": "com.jovannyrch.pagos_internet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "25472887541-2n3idai2joge5a647d4nifa1adgli74c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm8qxHnm7aiYYyuZFGbczKcFXOv5G1NMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "25472887541-2n3idai2joge5a647d4nifa1adgli74c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
