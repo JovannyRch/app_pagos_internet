@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pagos_internet/routes/routes.dart';
 import 'package:pagos_internet/screens/auth/login_screen.dart';
  
 void main() => runApp(MyApp());
@@ -9,7 +10,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pagos Internet',
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      initialRoute: LoginScreen.routeName,
+      routes: routes,
     );
   }
 }
