@@ -17,7 +17,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  
   final _formKey = GlobalKey<FormState>();
   TextEditingController password = new TextEditingController();
   TextEditingController password2 = new TextEditingController();
@@ -164,42 +163,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _form() {
-    return Container(
-      margin: EdgeInsets.only(top: _size.height * 0.08),
-      padding: EdgeInsets.symmetric(
-        horizontal: 35.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _authTitle(),
-          SizedBox(height: 16.0),
-          Input(
-              text: "Nombre completo",
-              icon: Icons.person,
-              controller: this.username),
-          Input(
-              text: "Domicilio completo",
-              icon: Icons.pin_drop,
-              controller: this.address),
-          Input(
-            text: "Correo electrónico",
-            icon: Icons.email,
-            controller: this.email,
-            validator: emailValidator,
-          ),
-          Input(
-              text: "Contraseña",
-              icon: Icons.lock,
-              controller: this.password,
-              isPassword: true),
-          Input(
-              text: "Confirme su contraseña",
-              icon: Icons.lock,
-              controller: this.password2,
-              isPassword: true),
-          _loginButton(),
-        ],
+    return Form(
+      key: _formKey,
+      child: Container(
+        margin: EdgeInsets.only(top: _size.height * 0.08),
+        padding: EdgeInsets.symmetric(
+          horizontal: 35.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _authTitle(),
+            SizedBox(height: 16.0),
+            Input(
+                text: "Nombre completo",
+                icon: Icons.person,
+                controller: this.username),
+            Input(
+                text: "Domicilio completo",
+                icon: Icons.pin_drop,
+                controller: this.address),
+            Input(
+              text: "Correo electrónico",
+              icon: Icons.email,
+              controller: this.email,
+              validator: emailValidator,
+            ),
+            Input(
+                text: "Contraseña",
+                icon: Icons.lock,
+                controller: this.password,
+                isPassword: true),
+            Input(
+                text: "Confirme su contraseña",
+                icon: Icons.lock,
+                controller: this.password2,
+                isPassword: true),
+            _loginButton(),
+          ],
+        ),
       ),
     );
   }
@@ -222,7 +224,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),
-        onPressed: !isCheckingUser ? checkInputData : null,
+        onPressed: !isCheckingUser ? checkInputDataOrTryRegister : null,
         color: kSecondaryColor,
         textColor: Colors.white,
         child: !isCheckingUser
@@ -235,7 +237,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void checkInputData() {
+  void checkInputDataOrTryRegister() {
     if (this.password.text.isEmpty || this.username.text.isEmpty) {
       this.showInvalidAlerts();
     } else {
@@ -270,18 +272,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  
   void handleRegister() async {
     try {
-       setCheckingUser(true);
+      setCheckingUser(true);
       if (!_formKey.currentState.validate()) {
         return;
       } else {
         _formKey.currentState.save();
         UserCredential user = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-                email: email.text.toLowerCase(),
-                password: password.text)
+                email: email.text.toLowerCase(), password: password.text)
             .catchError((onError) {
           print('ERRRRRRROOOOOOOOR');
           print(onError);
@@ -312,13 +312,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       }
     } catch (e) {
+      print("Error");
+      print(e.toString());
       setState(() {
         setCheckingUser(false);
       });
     }
   }
-
-  
 
   void setCheckingUser(bool val) {
     setState(() {
