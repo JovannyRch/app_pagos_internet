@@ -1,8 +1,11 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/validators.dart';
+import 'package:pagos_internet/screens/auth/login_controller.dart';
 import 'package:pagos_internet/screens/auth/register_screen.dart';
+import 'package:pagos_internet/screens/customer/home_customer_screen.dart';
 import 'package:pagos_internet/widget/InputWidget.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -223,16 +226,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void handleLogin() async {
     setCheckingUser(true);
-    /*  AuthResponse userFromDb =
-        await authService.login(username.text.trim(), password.text.trim());
-    if (userFromDb == null) {
-      showUserNotFoundMessage();
-    } else {
-      authService.storeUserInDevice(userFromDb);
-      goHomeScreen(userFromDb);
-    } */
+      UserCredential user =
+        await signIn(email.text, password.text);
+    if (user != null) {
+      saveUserInStorate(user);
+      Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
+    }
     setCheckingUser(false);
   }
+
+
 
   void setCheckingUser(bool val) {
     setState(() {

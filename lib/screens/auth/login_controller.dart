@@ -1,14 +1,14 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pagos_internet/shared/user_preferences.dart';
 
-class LoginController {
-  Future<UserCredential> signIn(
+ Future<UserCredential> signIn(
       String email, String password,) async {
-    UserCredential result;
+    UserCredential user;
     String errorMessage;
 
     try {
-      result = await FirebaseAuth.instance
+      user = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password)
           .catchError((onError) {
         
@@ -21,6 +21,13 @@ class LoginController {
     if (errorMessage != null) {
       return Future.error(errorMessage);
     }
-    return result;
+    return user;
   }
-}
+
+
+
+  void saveUserInStorate(UserCredential user){
+    UserPrefrences prefrences = new UserPrefrences();
+    prefrences.email = user.user.email;
+    prefrences.username = user.user.displayName;
+  } 
