@@ -13,8 +13,7 @@ class HomeCustumer extends StatefulWidget {
 }
 
 class _HomeCustumerState extends State<HomeCustumer> {
-
- int _selectedIndex = 0;
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +25,8 @@ class _HomeCustumerState extends State<HomeCustumer> {
           _perfilButton(),
         ],
       ),
-       body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          PagoScreen(),
-          HistorialScreen(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
+      body: _body(),
+      /*   bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: kSecondaryColor,
         currentIndex: _selectedIndex,
         items: [
@@ -45,6 +38,20 @@ class _HomeCustumerState extends State<HomeCustumer> {
             _selectedIndex = val;
           });
         },
+      ), */
+    );
+  }
+
+  Widget _body() {
+    return Container(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PagoScreen(),
+            HistorialScreen(),
+          ],
+        ),
       ),
     );
   }
