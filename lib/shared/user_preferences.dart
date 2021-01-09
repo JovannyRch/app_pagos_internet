@@ -1,9 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserPrefrences {
-  static final UserPrefrences _instance = new UserPrefrences._internal();
+class UserPrefences {
+  static final UserPrefences _instance = new UserPrefences._internal();
 
-  UserPrefrences._internal();
+  UserPrefences._internal();
   SharedPreferences _prefs;
 
   initPrefs() async {
@@ -38,7 +38,15 @@ class UserPrefrences {
     return this.email.isNotEmpty;
   }
 
-  factory UserPrefrences() {
+  get provider {
+    return _prefs.getInt('provider') ?? "";
+  }
+
+  set provider(String provider) {
+    _prefs.setString('provider', provider);
+  }
+
+  factory UserPrefences() {
     return _instance;
   }
 }

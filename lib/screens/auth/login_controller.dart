@@ -27,7 +27,7 @@ import 'package:pagos_internet/shared/user_preferences.dart';
 
 
   void saveUserInStorate(UserCredential user){
-    UserPrefrences prefrences = new UserPrefrences();
+    UserPrefences prefrences = new UserPrefences();
     prefrences.email = user.user.email;
     prefrences.username = user.user.displayName;
   } 

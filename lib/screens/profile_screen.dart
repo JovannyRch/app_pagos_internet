@@ -13,7 +13,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Size _size;
-  UserPrefrences _userPrefrences = new UserPrefrences();
+  UserPrefences _userPrefrences = new UserPrefences();
 
   @override
   Widget build(BuildContext context) {

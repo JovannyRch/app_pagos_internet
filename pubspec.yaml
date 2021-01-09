@@ -14,12 +14,17 @@ dependencies:
   cupertino_icons: ^1.0.0
   firebase_core: ^0.5.3
   firebase_auth: ^0.18.4+1
+  cloud_firestore: ^0.14.4
   font_awesome_flutter: ^8.4.0
-  firebase_database: ^4.4.0
   provider: ^4.3.2+3
   adaptive_dialog: ^0.9.3
   cool_alert: ^1.0.3
   shared_preferences: ^0.5.12+4
+  http: ^0.12.2
+  http_parser: ^3.1.4
+  compressimage: ^0.1.1
+  image_picker: ^0.6.7+21
+  mime_type: ^0.3.2
 
 dev_dependencies:
   flutter_test:

@@ -7,7 +7,7 @@ import 'package:pagos_internet/shared/user_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  UserPrefrences userPrefrences = new UserPrefrences();
+  UserPrefences userPrefrences= new UserPrefences();
   await userPrefrences.initPrefs();
   print(userPrefrences.email);
   print(userPrefrences.isLogged);

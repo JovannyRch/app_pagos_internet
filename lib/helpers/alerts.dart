@@ -60,3 +60,9 @@ showAlert(BuildContext context, String title, String subtitle) {
             ],
           ));
 }
+
+
+void showSnackBarMessage(String msg, GlobalKey<ScaffoldState> key) {
+  SnackBar snackBar = new SnackBar(content: new Text(msg));
+  key.currentState.showSnackBar(snackBar);
+}
