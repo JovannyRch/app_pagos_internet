@@ -1,7 +1,13 @@
+
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pagos_internet/const/conts.dart';
+import 'package:pagos_internet/helpers/alerts.dart';
+import 'package:pagos_internet/helpers/image.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
+import 'package:pagos_internet/shared/user_preferences.dart';
 import 'package:pagos_internet/widget/CardContainer.dart';
 
 enum StatusPaymanent {
@@ -20,9 +26,8 @@ class PagoScreen extends StatefulWidget {
 class _PagoScreenState extends State<PagoScreen> {
   StatusPaymanent status = StatusPaymanent.NOT_PAYED;
   Size _size;
-  
-  DateTime _now;
-
+  UserPrefences userPrefrences = new UserPrefences();
+  final picker = new ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +55,22 @@ class _PagoScreenState extends State<PagoScreen> {
           _rowInfoStatus(),
           SizedBox(height: 12.0),
           _actionButton(),
-          
         ],
       ),
     );
   }
 
   Widget _actionButton() {
-    if (status != StatusPaymanent.NOT_PAYED) return Container();
+    if (status != StatusPaymanent.NOT_PAYED) {
+      /* if (status == StatusPaymanent.CHECKING) {
+        return Container(
+            child: Center(child: Text("Pago en revisión")),
+            decoration: BoxDecoration(
+              color: Colors.yellow.shade300,
+            ));
+      } */
+      return Container();
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -88,8 +101,99 @@ class _PagoScreenState extends State<PagoScreen> {
   }
 
   void handleSendComprobante() {
-    //TODO: Take a photo
+    trySendComprobante();
+  }
+
+  void trySendComprobante() async {
+    try {
+      await sendComprobante();
+      showSuccessMessage();
+    } catch (e) {
+      showErrorMessage();
+    }
+  }
+
+  showSuccessMessage() async {
+    await success(context, "Comprobante enviado",
+        "Su comprobante de pago ha sido enviado para su revisión");
+  }
+
+  showErrorMessage() async {
+    await error(context, "Error", "Ocurrió un error el enviar el comprobante, por favor intente de nuevo");
+  }
+
+  Future sendComprobante() async {
     Comprobante comprobante = new Comprobante();
+    DateTime now = DateTime.now();
+    
+    comprobante.foto = await _selectSource();
+    comprobante.anio = now.year;
+    comprobante.mes = now.month;
+    comprobante.proveedor = "Googinet";
+    comprobante.fecha = now.toIso8601String();
+    comprobante.status = StatusComprobante.enRevision;
+    comprobante.username = userPrefrences.username;
+    comprobante.userId = userPrefrences.email;
+    await comprobante.save();
+  }
+
+  
+
+
+  Future<String> _selectSource() async {
+    final option = await showDialog(
+        context: context,
+        child: SimpleDialog(
+          title: Text('Cargar foto'),
+          children: <Widget>[
+            SimpleDialogOption(
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text('Tomar foto'),
+                    ),
+                    FaIcon(
+                      FontAwesomeIcons.camera,
+                      size: 15.0,
+                    )
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pop(context, 1);
+                }),
+            SimpleDialogOption(
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text('Elegir una foto de la galería'),
+                  ),
+                  FaIcon(
+                    FontAwesomeIcons.images,
+                    size: 15.0,
+                  )
+                ],
+              ),
+              onPressed: () {
+                Navigator.pop(context, 2);
+              },
+            ),
+          ],
+        ));
+
+    if (option == null) return "";
+    String url;
+    PickedFile pickedFile;
+
+    switch (option) {
+      case 1:
+        pickedFile = await picker.getImage(source: ImageSource.camera);
+        break;
+      case 2:
+        pickedFile = await picker.getImage(source: ImageSource.gallery);
+        break;
+    }
+    url = await subirImagen(pickedFile);
+    return url;
   }
 
   Widget _rowInfoStatus() {
@@ -111,7 +215,7 @@ class _PagoScreenState extends State<PagoScreen> {
     switch (status) {
       case StatusPaymanent.CHECKING:
         return Text(
-          "En espera",
+          "Comprobante de pago en revisión",
           style: style,
         );
       case StatusPaymanent.NOT_PAYED:
@@ -130,9 +234,10 @@ class _PagoScreenState extends State<PagoScreen> {
   }
 
   Widget _titleCard() {
+    //TODO: Add proveedor
     return Container(
         child: Text(
-      "Mes actual",
+      "Googinet",
       style: TextStyle(
         color: kMainColor.withOpacity(0.45),
         fontSize: 20.0,

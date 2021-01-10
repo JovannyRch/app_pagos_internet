@@ -4,13 +4,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-void success(
+Future success(
   BuildContext context,
   String title,
   String message, {
   Function f = null,
 }) {
-  CoolAlert.show(
+  return CoolAlert.show(
     context: context,
     type: CoolAlertType.success,
     title: title,
@@ -19,8 +19,8 @@ void success(
   );
 }
 
-void error(BuildContext context, String title, String message) {
-  CoolAlert.show(
+Future error(BuildContext context, String title, String message) {
+  return CoolAlert.show(
     context: context,
     type: CoolAlertType.error,
     title: title,

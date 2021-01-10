@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pagos_internet/services/api_service.dart';
 import 'package:pagos_internet/shared/user_preferences.dart';
 
@@ -78,8 +79,8 @@ class Comprobante {
         "proveedor": proveedor,
       };
 
-  void save() async {
-    api.addDocument(this.toJson());
+  Future<DocumentReference> save() async {
+    return await api.addDocument(this.toJson());
   }
 
   static Future<List<Comprobante>> getByUser(String user) async {
