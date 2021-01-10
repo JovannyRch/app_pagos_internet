@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
+import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
+import 'package:pagos_internet/screens/customer/pago_screen.dart';
 
 class HistorialScreen extends StatefulWidget {
   HistorialScreen({Key key}) : super(key: key);
@@ -70,22 +72,64 @@ class _HistorialScreenState extends State<HistorialScreen> {
 
   Widget _comprobanteWidget(Comprobante comprobante) {
     String monthName = getMonthName(comprobante.mes);
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.0),
-      height: 40.0,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("$monthName ${comprobante.anio}"),
-              Icon(Icons.arrow_forward, color: Colors.grey.shade400,),
-            ],
-          ),
-          Divider(),
-        ],
+    return GestureDetector(
+      onTap: () {
+        handleClickDetailComprobante(comprobante);
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10.0),
+        height: 40.0,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text("$monthName ${comprobante.anio}"),
+                    SizedBox(width: 10.0),
+                    Container(
+                      height: 10,
+                      width: 10,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _getBackgroundColorByStatus(comprobante.status),
+                      ),
+                    ),
+                  ],
+                ),
+                Icon(
+                  Icons.arrow_forward,
+                  color: Colors.grey.shade300,
+                ),
+              ],
+            ),
+            Divider(),
+          ],
+        ),
       ),
     );
+  }
+
+  void handleClickDetailComprobante(Comprobante comprobante) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              ComprobanteDetailScreen(comprobante: comprobante)),
+    );
+  }
+
+  Color _getBackgroundColorByStatus(String status) {
+    switch (status) {
+      case "enRevision":
+        return Colors.yellow;
+      case "noPagado":
+        return Colors.red.shade400;
+      case "pagado":
+        return Colors.transparent;
+    }
+    return Colors.transparent;
   }
 }
