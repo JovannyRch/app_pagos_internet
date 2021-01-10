@@ -56,7 +56,13 @@ class _HistorialScreenState extends State<HistorialScreen> {
             ),
           ),
           SizedBox(height: 30.0),
-          ...comprobantes.map((e) => _comprobanteWidget(e)).toList()
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                ...comprobantes.map((e) => _comprobanteWidget(e)).toList(),
+              ],
+            ),
+          )
         ],
       ),
     );
@@ -68,10 +74,13 @@ class _HistorialScreenState extends State<HistorialScreen> {
       margin: EdgeInsets.only(bottom: 10.0),
       height: 40.0,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("$monthName ${comprobante.anio}"),
+              Icon(Icons.arrow_forward, color: Colors.grey.shade400,),
             ],
           ),
           Divider(),
