@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/alerts.dart';
 import 'package:pagos_internet/helpers/validators.dart';
+import 'package:pagos_internet/models/item_comprobante.dart';
 import 'package:pagos_internet/screens/auth/login_screen.dart';
 import 'package:pagos_internet/screens/customer/home_customer_screen.dart';
 import 'package:pagos_internet/widget/InputWidget.dart';
@@ -26,6 +27,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   BuildContext _globalContext;
   bool isCheckingUser = false;
   Size _size;
+
+  List<Item> users = <Item>[
+    const Item('Android',Icon(Icons.android,color:  const Color(0xFF167F67),)),
+    const Item('Flutter',Icon(Icons.flag,color:  const Color(0xFF167F67),)),
+    const Item('ReactNative',Icon(Icons.format_indent_decrease,color:  const Color(0xFF167F67),)),
+    const Item('iOS',Icon(Icons.mobile_screen_share,color:  const Color(0xFF167F67),)),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -183,6 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 text: "Domicilio completo",
                 icon: Icons.pin_drop,
                 controller: this.address),
+            _dropDown(),
             Input(
               text: "Correo electrónico",
               icon: Icons.email,
@@ -204,6 +213,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+
+  Widget _dropDown(){
+    return DropdownButton<Item>(
+            
+            hint:  Text("Selecciona un proveedor"),
+            isExpanded: true,
+            onChanged: (Item Value) {
+              /* setState(() {
+                selectedUser = Value;
+              }); */
+            },
+            items: users.map((Item user) {
+              return  DropdownMenuItem<Item>(
+                value: user,
+                child: Container(
+                  width: double.infinity,
+                  child: Row(
+                    children: <Widget>[
+                      user.icon,
+                      SizedBox(width: 10,),
+                      Text(
+                        user.name,
+                        style:  TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          );
   }
 
   Widget _authTitle() {

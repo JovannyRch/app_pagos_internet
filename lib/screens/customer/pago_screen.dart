@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/months.dart';
+import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/widget/CardContainer.dart';
 
 enum StatusPaymanent {
@@ -19,6 +20,9 @@ class PagoScreen extends StatefulWidget {
 class _PagoScreenState extends State<PagoScreen> {
   StatusPaymanent status = StatusPaymanent.NOT_PAYED;
   Size _size;
+  
+  DateTime _now;
+
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +87,10 @@ class _PagoScreenState extends State<PagoScreen> {
     );
   }
 
-  void handleSendComprobante() {}
+  void handleSendComprobante() {
+    //TODO: Take a photo
+    Comprobante comprobante = new Comprobante();
+  }
 
   Widget _rowInfoStatus() {
     return Row(
