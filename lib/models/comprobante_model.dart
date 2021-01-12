@@ -94,8 +94,8 @@ class Comprobante {
     var now = DateTime.now();
     final resp = await api.getWheres({
       'userId' : _preferences.email,
-      'month' : now.month,
-      'year' : now.year,
+      'mes' : now.month,
+      'anio' : now.year,
     });
     return resp.docs
         .map((doc) => Comprobante.fromMap(doc.data(), doc.id))

@@ -1,4 +1,4 @@
-
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,16 +29,46 @@ class _PagoScreenState extends State<PagoScreen> {
   UserPrefences userPrefrences = new UserPrefences();
   final picker = new ImagePicker();
   List<Comprobante> comprobantes = [];
- 
+  bool isUploadingPhoto = false;
+  Comprobante comprobanteMesActual;
+  bool isLoadingComprobanteActual = false;
+  DateTime now = DateTime.now();
 
   @override
   void initState() {
-    
+    this.fetchCurrentComprobante();
     super.initState();
   }
 
+  void fetchCurrentComprobante() async {
+    setIsLoadingComprobanteActual(true);
+    List<Comprobante> comprobantes = await Comprobante.getCurrentMonthByUser();
+    this.comprobanteMesActual =
+        comprobantes.length > 0 ? comprobantes.first : null;
+    if (comprobanteMesActual == null) {
+      this.initComprobante();
+    }
+    setIsLoadingComprobanteActual(true);
+  }
 
+  void initComprobante() {
+    comprobanteMesActual.mes = now.month;
+    comprobanteMesActual.proveedor = "Googinet";
+    comprobanteMesActual.status = "noPagado";
+    comprobanteMesActual.anio = now.year;
+  }
 
+  void setIseUploadingPhoto(bool val) {
+    setState(() {
+      isUploadingPhoto = val;
+    });
+  }
+
+  void setIsLoadingComprobanteActual(bool val) {
+    setState(() {
+      isLoadingComprobanteActual = val;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,23 +82,26 @@ class _PagoScreenState extends State<PagoScreen> {
 
   Widget _currentMonthCard() {
     return CardContainer(
-      width: double.infinity,
-      height: _size.height * 0.30,
-      padding: EdgeInsets.all(30),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _titleCard(),
-          SizedBox(height: 8.0),
-          _currentMonthLabel(),
-          SizedBox(height: 4.0),
-          _rowInfoStatus(),
-          SizedBox(height: 12.0),
-          _actionButton(),
-        ],
-      ),
-    );
+        width: double.infinity,
+        height: _size.height * 0.30,
+        padding: EdgeInsets.all(30),
+        child: isLoadingComprobanteActual
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _titleCard(),
+                  SizedBox(height: 8.0),
+                  _currentMonthLabel(),
+                  SizedBox(height: 4.0),
+                  _rowInfoStatus(),
+                  SizedBox(height: 12.0),
+                  _actionButton(),
+                ],
+              ));
   }
 
   Widget _actionButton() {
@@ -117,11 +150,32 @@ class _PagoScreenState extends State<PagoScreen> {
 
   void trySendComprobante() async {
     try {
-      await sendComprobante();
-      showSuccessMessage();
+      _selectSource();
     } catch (e) {
       showErrorMessage();
     }
+  }
+
+  void _selectSource() async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                    leading: new Icon(Icons.camera),
+                    title: new Text('Tomar foto'),
+                    onTap: () => {sendComprobante(CAMERA)}),
+                new ListTile(
+                  leading: new FaIcon(FontAwesomeIcons.images),
+                  title: new Text('Seleccionar foto de la galeria'),
+                  onTap: () => {sendComprobante(GALLERY)},
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   showSuccessMessage() async {
@@ -130,80 +184,56 @@ class _PagoScreenState extends State<PagoScreen> {
   }
 
   showErrorMessage() async {
-    await error(context, "Error", "Ocurrió un error el enviar el comprobante, por favor intente de nuevo");
+    await error(context, "Error",
+        "Ocurrió un error el enviar el comprobante, por favor intente de nuevo");
   }
 
-  Future sendComprobante() async {
+  void sendComprobante(int userSourcePhotoOption) async {
     Comprobante comprobante = new Comprobante();
     DateTime now = DateTime.now();
-    
-    comprobante.foto = await _selectSource();
-    comprobante.anio = now.year;
-    comprobante.mes = now.month;
-    comprobante.proveedor = "Googinet";
-    comprobante.fecha = now.toIso8601String();
-    comprobante.status = StatusComprobante.enRevision;
-    comprobante.username = userPrefrences.username;
-    comprobante.userId = userPrefrences.email;
-    await comprobante.save();
+    // String photoUrl = await _getSource(userSourcePhotoOption);
+    String photoUrl =
+        "https://res.cloudinary.com/jovannyrch/image/upload/v1610467708/jumbtsjyuo4ccjjjeqko.jpg";
+    if (photoUrl.isNotEmpty) {
+      comprobante.foto = photoUrl;
+      comprobante.anio = now.year;
+      comprobante.mes = now.month;
+      comprobante.proveedor = "Googinet";
+      comprobante.fecha = now.toIso8601String();
+      comprobante.status = StatusComprobante.enRevision;
+      comprobante.username = userPrefrences.username;
+      comprobante.userId = userPrefrences.email;
+      await comprobante.save();
+      showSuccessMessage();
+    } else {
+      showErrorImageUrl();
+    }
   }
 
-  
+  void showErrorImageUrl() {
+    showOkAlertDialog(
+        context: context, title: "Error", message: "Error al subir la imagen");
+  }
 
-
-  Future<String> _selectSource() async {
-    final option = await showDialog(
-        context: context,
-        child: SimpleDialog(
-          title: Text('Cargar foto'),
-          children: <Widget>[
-            SimpleDialogOption(
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text('Tomar foto'),
-                    ),
-                    FaIcon(
-                      FontAwesomeIcons.camera,
-                      size: 15.0,
-                    )
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.pop(context, 1);
-                }),
-            SimpleDialogOption(
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text('Elegir una foto de la galería'),
-                  ),
-                  FaIcon(
-                    FontAwesomeIcons.images,
-                    size: 15.0,
-                  )
-                ],
-              ),
-              onPressed: () {
-                Navigator.pop(context, 2);
-              },
-            ),
-          ],
-        ));
-
-    if (option == null) return "";
-    String url;
-    PickedFile pickedFile;
-
-    switch (option) {
-      case 1:
-        pickedFile = await picker.getImage(source: ImageSource.camera);
-        break;
-      case 2:
-        pickedFile = await picker.getImage(source: ImageSource.gallery);
-        break;
+  Future<String> _getSource(int option) async {
+    String url = "";
+    try {
+      PickedFile pickedFile;
+      switch (option) {
+        case CAMERA:
+          pickedFile = await picker.getImage(source: ImageSource.camera);
+          break;
+        case GALLERY:
+          pickedFile = await picker.getImage(source: ImageSource.gallery);
+          break;
+      }
+      setIseUploadingPhoto(true);
+      url = await subirImagen(pickedFile);
+      setIseUploadingPhoto(false);
+    } catch (e) {
+      showErrorUploadingPhoto();
     }
-    url = await subirImagen(pickedFile);
+    setIseUploadingPhoto(false);
     return url;
   }
 
@@ -268,7 +298,6 @@ class _PagoScreenState extends State<PagoScreen> {
     );
   }
 
-
   Widget _currentMonthStatus() {
     return Container(
       width: 10,
@@ -283,24 +312,14 @@ class _PagoScreenState extends State<PagoScreen> {
             blurRadius: 1.0,
           ),
         ],
-        color: _getBackgroundColorByStatus(),
+        color: getBackgroundColorByStatus(comprobanteMesActual.status),
       ),
     );
   }
 
+  //Errors messages
 
-
-  Color _getBackgroundColorByStatus() {
-    switch (status) {
-      case StatusPaymanent.CHECKING:
-        return Colors.yellow;
-      case StatusPaymanent.NOT_PAYED:
-        return Colors.red.shade400;
-      case StatusPaymanent.PAYED:
-        return Colors.green;
-    }
-    return Colors.white;
-  }
+  void showErrorUploadingPhoto() {}
 }
 
 // CREATE SEQUENCE blueray_sec START WITH 1 INCREMENT BY 1 CACHE 100;

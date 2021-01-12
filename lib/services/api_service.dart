@@ -45,7 +45,7 @@ class Api {
 
   Future<QuerySnapshot> getWheres(Map<String, dynamic> data) {
       List<String> keys = data.keys.toList();
-      Query r;
+      Query r = ref;
 
       for(String k in keys){
         r = r.where(k,isEqualTo: data[k]);  

@@ -3,7 +3,6 @@ import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
-import 'package:pagos_internet/screens/customer/pago_screen.dart';
 
 class HistorialScreen extends StatefulWidget {
   HistorialScreen({Key key}) : super(key: key);
@@ -44,7 +43,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
       print("Ocurrio un error al obtener los comprobantes del usurio");
       print(e.toString());
       this.comprobantes = [];
-    }finally{
+    } finally {
       setIsFetchingData(false);
     }
   }
@@ -74,7 +73,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
 
   Widget renderDataOrLoading() {
     if (isFetchingData) {
-      return CircularProgressIndicator();
+      return Center(child: CircularProgressIndicator());
     } else {
       return comprobantes.length == 0 ? _emptyData() : _data();
     }
@@ -92,42 +91,27 @@ class _HistorialScreenState extends State<HistorialScreen> {
 
   Widget _comprobanteWidget(Comprobante comprobante) {
     String monthName = getMonthName(comprobante.mes);
-    return GestureDetector(
+    return ListTile(
       onTap: () {
         handleClickDetailComprobante(comprobante);
       },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 10.0),
-        height: 40.0,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text("$monthName ${comprobante.anio}"),
-                    SizedBox(width: 10.0),
-                    Container(
-                      height: 10,
-                      width: 10,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _getBackgroundColorByStatus(comprobante.status),
-                      ),
-                    ),
-                  ],
-                ),
-                Icon(
-                  Icons.arrow_forward,
-                  color: Colors.grey.shade300,
-                ),
-              ],
+      title: Row(
+        children: [
+          Text("$monthName ${comprobante.anio}"),
+          SizedBox(width: 10.0),
+          Container(
+            height: 10,
+            width: 10,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _getBackgroundColorByStatus(comprobante.status),
             ),
-            Divider(),
-          ],
-        ),
+          ),
+        ],
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        color: Colors.grey.shade300,
       ),
     );
   }
