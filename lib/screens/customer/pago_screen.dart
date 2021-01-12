@@ -28,6 +28,17 @@ class _PagoScreenState extends State<PagoScreen> {
   Size _size;
   UserPrefences userPrefrences = new UserPrefences();
   final picker = new ImagePicker();
+  List<Comprobante> comprobantes = [];
+ 
+
+  @override
+  void initState() {
+    
+    super.initState();
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -257,15 +268,6 @@ class _PagoScreenState extends State<PagoScreen> {
     );
   }
 
-  Widget _cardStatusContainer() {
-    return Container(
-      height: 60.0,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.0),
-        color: _getBackgroundColorByStatus(),
-      ),
-    );
-  }
 
   Widget _currentMonthStatus() {
     return Container(
@@ -286,17 +288,7 @@ class _PagoScreenState extends State<PagoScreen> {
     );
   }
 
-  Color _setColorByStatus() {
-    switch (status) {
-      case StatusPaymanent.CHECKING:
-        return Colors.yellow;
-      case StatusPaymanent.NOT_PAYED:
-        return Colors.red;
-      case StatusPaymanent.PAYED:
-        return Colors.green;
-    }
-    return Colors.white;
-  }
+
 
   Color _getBackgroundColorByStatus() {
     switch (status) {
@@ -310,3 +302,5 @@ class _PagoScreenState extends State<PagoScreen> {
     return Colors.white;
   }
 }
+
+// CREATE SEQUENCE blueray_sec START WITH 1 INCREMENT BY 1 CACHE 100;

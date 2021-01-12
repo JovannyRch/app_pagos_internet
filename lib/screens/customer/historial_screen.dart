@@ -13,35 +13,41 @@ class HistorialScreen extends StatefulWidget {
 }
 
 class _HistorialScreenState extends State<HistorialScreen> {
-  List<Comprobante> comprobantes = [
-    new Comprobante(
-        id: "1",
-        username: "Miriam Ramírez García",
-        mes: 12,
-        anio: 2020,
-        foto: "",
-        fecha: "",
-        status: StatusComprobante.pagado,
-        proveedor: "Googinet"),
-    new Comprobante(
-        id: "1",
-        username: "Miriam Ramírez García",
-        mes: 11,
-        anio: 2020,
-        foto: "",
-        fecha: "",
-        status: StatusComprobante.noPagado,
-        proveedor: "Googinet"),
-    new Comprobante(
-        id: "1",
-        username: "Miriam Ramírez García",
-        mes: 10,
-        anio: 2020,
-        foto: "",
-        fecha: "",
-        status: StatusComprobante.enRevision,
-        proveedor: "Googinet"),
-  ];
+  List<Comprobante> comprobantes = [];
+  bool isFetchingData = false;
+  bool isErrorFecthingData = false;
+
+  @override
+  void initState() {
+    super.initState();
+    this.fetchData();
+  }
+
+  void setIsFetchingData(bool val) {
+    setState(() {
+      isFetchingData = val;
+    });
+  }
+
+  void setIsErrorFetchingData(bool val) {
+    setState(() {
+      isErrorFecthingData = val;
+    });
+  }
+
+  void fetchData() async {
+    setIsFetchingData(true);
+    try {
+      this.comprobantes = await Comprobante.getByUser();
+    } catch (e) {
+      setIsErrorFetchingData(true);
+      print("Ocurrio un error al obtener los comprobantes del usurio");
+      print(e.toString());
+      this.comprobantes = [];
+    }finally{
+      setIsFetchingData(false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,15 +65,29 @@ class _HistorialScreenState extends State<HistorialScreen> {
           ),
           SizedBox(height: 30.0),
           SingleChildScrollView(
-            child: Column(
-              children: [
-                ...comprobantes.map((e) => _comprobanteWidget(e)).toList(),
-              ],
-            ),
+            child: renderDataOrLoading(),
           )
         ],
       ),
     );
+  }
+
+  Widget renderDataOrLoading() {
+    if (isFetchingData) {
+      return CircularProgressIndicator();
+    } else {
+      return comprobantes.length == 0 ? _emptyData() : _data();
+    }
+  }
+
+  Widget _emptyData() {
+    return Container();
+  }
+
+  Widget _data() {
+    return Column(children: [
+      ...comprobantes.map((e) => _comprobanteWidget(e)).toList(),
+    ]);
   }
 
   Widget _comprobanteWidget(Comprobante comprobante) {

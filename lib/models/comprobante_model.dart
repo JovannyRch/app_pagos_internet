@@ -83,14 +83,14 @@ class Comprobante {
     return await api.addDocument(this.toJson());
   }
 
-  static Future<List<Comprobante>> getByUser(String user) async {
-    final resp = await api.getWhere('userId', user);
+  static Future<List<Comprobante>> getByUser() async {
+    final resp = await api.getWhere('userId', _preferences.email);
     return resp.docs
         .map((doc) => Comprobante.fromMap(doc.data(), doc.id))
         .toList();
   }
 
-   static Future<List<Comprobante>> getCurrentMonthByUser(String user) async {
+   static Future<List<Comprobante>> getCurrentMonthByUser() async {
     var now = DateTime.now();
     final resp = await api.getWheres({
       'userId' : _preferences.email,
