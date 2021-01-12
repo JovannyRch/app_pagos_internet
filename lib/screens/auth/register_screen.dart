@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/alerts.dart';
 import 'package:pagos_internet/helpers/validators.dart';
-import 'package:pagos_internet/models/item_comprobante.dart';
+import 'package:pagos_internet/models/item_proveedor_comprobante.dart';
 import 'package:pagos_internet/screens/auth/login_screen.dart';
 import 'package:pagos_internet/screens/customer/home_customer_screen.dart';
 import 'package:pagos_internet/widget/InputWidget.dart';
@@ -24,15 +24,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController address = new TextEditingController();
   TextEditingController email = new TextEditingController();
   TextEditingController username = new TextEditingController();
+  TextEditingController phone = new TextEditingController();
+
   BuildContext _globalContext;
   bool isCheckingUser = false;
   Size _size;
+  ItemProveedor providerSelected;
 
-  List<Item> users = <Item>[
-    const Item('Android',Icon(Icons.android,color:  const Color(0xFF167F67),)),
-    const Item('Flutter',Icon(Icons.flag,color:  const Color(0xFF167F67),)),
-    const Item('ReactNative',Icon(Icons.format_indent_decrease,color:  const Color(0xFF167F67),)),
-    const Item('iOS',Icon(Icons.mobile_screen_share,color:  const Color(0xFF167F67),)),
+  List<ItemProveedor> users = <ItemProveedor>[
+    const ItemProveedor(
+        'Googinet',
+        Icon(
+          Icons.wifi,
+          color: kSecondaryColor,
+        )),
+    const ItemProveedor(
+        'Intervala',
+        Icon(
+          Icons.wifi_rounded,
+          color: kSecondaryColor,
+        )),
   ];
 
   @override
@@ -136,40 +147,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _input(String text, IconData icon,
-      {bool isPassword = false, TextEditingController controller}) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 14.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: isPassword,
-        decoration: InputDecoration(
-          prefixIcon: Icon(
-            icon,
-            color: kMainColor,
-          ),
-          labelText: text,
-          labelStyle: TextStyle(
-            color: kMainColor,
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: kMainColor),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: kMainColor),
-          ),
-          border: UnderlineInputBorder(
-            borderSide: BorderSide(color: kMainColor),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _form() {
     return Form(
       key: _formKey,
@@ -190,13 +167,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Input(
                 text: "Domicilio completo",
                 icon: Icons.pin_drop,
-                controller: this.address),
+                controller: this.address,
+                ),
             _dropDown(),
+            Input(
+              text: "Teléfono de contacto",
+              icon: Icons.phone,
+              controller: this.phone,
+              keyboardType: TextInputType.phone,
+            ),
             Input(
               text: "Correo electrónico",
               icon: Icons.email,
               controller: this.email,
               validator: emailValidator,
+              keyboardType: TextInputType.emailAddress,
             ),
             Input(
                 text: "Contraseña",
@@ -215,35 +200,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _dropDown(){
-    return DropdownButton<Item>(
-            
-            hint:  Text("Selecciona un proveedor"),
-            isExpanded: true,
-            onChanged: (Item Value) {
-              /* setState(() {
-                selectedUser = Value;
-              }); */
-            },
-            items: users.map((Item user) {
-              return  DropdownMenuItem<Item>(
-                value: user,
-                child: Container(
-                  width: double.infinity,
-                  child: Row(
-                    children: <Widget>[
-                      user.icon,
-                      SizedBox(width: 10,),
-                      Text(
-                        user.name,
-                        style:  TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
+  Widget _dropDown() {
+    return DropdownButton<ItemProveedor>(
+    
+      hint: Text("Selecciona un proveedor"),
+      isExpanded: true,
+      value: providerSelected,
+      
+      underline: Container(
+        color: kMainColor.withOpacity(0.3),
+        height: 1.0,
+      ),
+      focusColor: kSecondaryColor,
+      onChanged: (ItemProveedor value) {
+        setState(() {
+          providerSelected = value;
+        });
+      },
+      items: users.map((ItemProveedor user) {
+        return DropdownMenuItem<ItemProveedor>(
+          value: user,
+          child: Container(
+            padding: EdgeInsets.only(left: 15.0),
+            width: double.infinity,
+            child: Row(
+              children: <Widget>[
+                user.icon,
+                SizedBox(
+                  width: 10,
                 ),
-              );
-            }).toList(),
-          );
+                Text(
+                  user.name,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   Widget _authTitle() {
@@ -278,11 +273,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void checkInputDataOrTryRegister() {
-    if (this.password.text.isEmpty || this.username.text.isEmpty) {
-      this.showInvalidAlerts();
-    } else {
-      this.tryRegister();
-    }
+    tryRegister();
   }
 
   void tryRegister() {
@@ -299,18 +290,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context: _globalContext, message: "Ocurrió un error al hacer el login");
   }
 
-  void showInvalidAlerts() {
-    if (RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(this.email.text)) {
-      showOkAlertDialog(
-          context: _globalContext, message: "Ingrese un correo válido");
-    } else if (this.password.text.isEmpty) {
-      showOkAlertDialog(
-          context: _globalContext,
-          message: "La contraseña no puede estar vacía");
-    }
-  }
 
   void handleRegister() async {
     try {

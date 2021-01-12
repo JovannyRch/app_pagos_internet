@@ -71,7 +71,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void handleLogout(){
+  void handleLogout()async {
+    await _userPrefrences.clear();
     Navigator.pushReplacementNamed(context, LoginScreen.routeName);
   }
+
+
 }

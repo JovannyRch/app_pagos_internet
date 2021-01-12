@@ -46,6 +46,10 @@ class UserPrefences {
     _prefs.setString('provider', provider);
   }
 
+  Future clear() async {
+    return await _prefs.clear();
+  }
+
   factory UserPrefences() {
     return _instance;
   }

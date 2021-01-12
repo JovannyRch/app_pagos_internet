@@ -21,6 +21,10 @@ class Api {
     return ref.doc(id).get();
   }
 
+  Future<DocumentSnapshot> setDocumentById(String id, Map data) {
+    return ref.doc(id).set(data);
+  }
+
   Future<void> removeDocument(String id) {
     return ref.doc(id).delete();
   }
