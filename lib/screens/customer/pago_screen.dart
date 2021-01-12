@@ -7,6 +7,7 @@ import 'package:pagos_internet/helpers/alerts.dart';
 import 'package:pagos_internet/helpers/image.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
+import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
 import 'package:pagos_internet/shared/user_preferences.dart';
 import 'package:pagos_internet/widget/CardContainer.dart';
 
@@ -48,7 +49,7 @@ class _PagoScreenState extends State<PagoScreen> {
     if (comprobanteMesActual == null) {
       this.initComprobante();
     }
-    setIsLoadingComprobanteActual(true);
+    setIsLoadingComprobanteActual(false);
   }
 
   void initComprobante() {
@@ -105,14 +106,10 @@ class _PagoScreenState extends State<PagoScreen> {
   }
 
   Widget _actionButton() {
-    if (status != StatusPaymanent.NOT_PAYED) {
-      /* if (status == StatusPaymanent.CHECKING) {
-        return Container(
-            child: Center(child: Text("Pago en revisión")),
-            decoration: BoxDecoration(
-              color: Colors.yellow.shade300,
-            ));
-      } */
+    if (comprobanteMesActual.status != "noPagado") {
+      if (comprobanteMesActual.status == "enRevision") {
+        return _moraRevisionDetails();
+      }
       return Container();
     }
     return Row(
@@ -141,6 +138,46 @@ class _PagoScreenState extends State<PagoScreen> {
           ),
         )
       ],
+    );
+  }
+
+  Widget _moraRevisionDetails() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        RaisedButton(
+          onPressed: handleComprobanteDetails,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          color: kMainColor,
+          child: Row(
+            children: [
+              Text(
+                "Ver comprobante",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(width: 10),
+              FaIcon(
+                FontAwesomeIcons.eye,
+                color: Colors.white,
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  void handleComprobanteDetails() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ComprobanteDetailScreen(comprobante: comprobanteMesActual),
+      ),
     );
   }
 
@@ -253,18 +290,18 @@ class _PagoScreenState extends State<PagoScreen> {
       color: kMainColor,
       fontSize: 17.0,
     );
-    switch (status) {
-      case StatusPaymanent.CHECKING:
+    switch (comprobanteMesActual.status) {
+      case "enRevision":
         return Text(
-          "Comprobante de pago en revisión",
+          "En revisión",
           style: style,
         );
-      case StatusPaymanent.NOT_PAYED:
+      case "noPagado":
         return Text(
           "No pagado",
           style: style,
         );
-      case StatusPaymanent.PAYED:
+      case "pagado":
         return Text(
           "Pagado",
           style: style,
@@ -275,10 +312,9 @@ class _PagoScreenState extends State<PagoScreen> {
   }
 
   Widget _titleCard() {
-    //TODO: Add proveedor
     return Container(
         child: Text(
-      "Googinet",
+      comprobanteMesActual.proveedor,
       style: TextStyle(
         color: kMainColor.withOpacity(0.45),
         fontSize: 20.0,
