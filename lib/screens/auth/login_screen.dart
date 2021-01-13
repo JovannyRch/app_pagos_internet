@@ -3,9 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_button/loading_button.dart';
 import 'package:pagos_internet/const/conts.dart';
+import 'package:pagos_internet/helpers/alerts.dart';
 import 'package:pagos_internet/helpers/storage.dart';
 import 'package:pagos_internet/helpers/validators.dart';
 import 'package:pagos_internet/models/user_model.dart';
+import 'package:pagos_internet/screens/admin/home_admin_screen.dart';
 import 'package:pagos_internet/screens/auth/login_controller.dart';
 import 'package:pagos_internet/screens/auth/register_screen.dart';
 import 'package:pagos_internet/screens/customer/home_customer_screen.dart';
@@ -26,12 +28,14 @@ class _LoginScreenState extends State<LoginScreen> {
   BuildContext _globalContext;
   bool isCheckingUser = false;
   Size _size;
+  GlobalKey _key;
 
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
     _globalContext = context;
     return Scaffold(
+      key: _key,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -226,16 +230,32 @@ class _LoginScreenState extends State<LoginScreen> {
   void handleLogin() async {
     if (_formKey.currentState.validate()) {
       setCheckingUser(true);
-      UserCredential user =
-          await signIn(email.text.toLowerCase().trim(), password.text);
-      if (user != null) {
-        Usuario usuario =
-            await Usuario.getById(user.user.email.toLowerCase().trim());
-        Storage.saveUser(usuario);
-        Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
+      Usuario admUser = checkIfAdminUser();
+      if (admUser == null) {
+        UserCredential user =
+            await signIn(email.text.toLowerCase().trim(), password.text);
+        if (user != null) {
+          Usuario usuario =
+              await Usuario.getById(user.user.email.toLowerCase().trim());
+          Storage.saveUser(usuario);
+          Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
+        } else {
+          showNoUserFoundedMessage();
+        }
+      } else {
+        Navigator.pushReplacementNamed(context, HomeAdminScreen.routeName);
+        Storage.saveUser(admUser);
       }
       setCheckingUser(false);
     }
+  }
+
+  void showNoUserFoundedMessage() {
+    showSnackBarMessage("Usuario no encontrado", _key);
+  }
+
+  Usuario checkIfAdminUser() {
+    return Usuario.loginAdminCredentials(email.text, password.text);
   }
 
   void setCheckingUser(bool val) {

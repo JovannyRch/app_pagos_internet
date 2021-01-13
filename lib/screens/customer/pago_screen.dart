@@ -2,13 +2,16 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_button/loading_button.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/alerts.dart';
 import 'package:pagos_internet/helpers/image.dart';
 import 'package:pagos_internet/helpers/months.dart';
+import 'package:pagos_internet/helpers/storage.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
+import 'package:pagos_internet/models/user_model.dart';
 import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
-import 'package:pagos_internet/shared/user_preferences.dart';
+
 import 'package:pagos_internet/widget/CardContainer.dart';
 
 enum StatusPaymanent {
@@ -27,17 +30,19 @@ class PagoScreen extends StatefulWidget {
 class _PagoScreenState extends State<PagoScreen> {
   StatusPaymanent status = StatusPaymanent.NOT_PAYED;
   Size _size;
-  UserPrefences userPrefrences = new UserPrefences();
+
   final picker = new ImagePicker();
   List<Comprobante> comprobantes = [];
   bool isUploadingPhoto = false;
+  bool isUploadingComprobante = false;
   Comprobante comprobanteMesActual;
   bool isLoadingComprobanteActual = false;
   DateTime now = DateTime.now();
+  Usuario currentUser = Storage.getCurrentUser();
 
   @override
   void initState() {
-    this.fetchCurrentComprobante();
+    fetchCurrentComprobante();
     super.initState();
   }
 
@@ -54,15 +59,21 @@ class _PagoScreenState extends State<PagoScreen> {
 
   void initComprobante() {
     comprobanteMesActual = new Comprobante();
-    comprobanteMesActual.mes = now.month;
-    comprobanteMesActual.proveedor = "Googinet";
+    comprobanteMesActual.proveedor = this.currentUser.proveedor;
     comprobanteMesActual.status = "noPagado";
+    comprobanteMesActual.mes = now.month;
     comprobanteMesActual.anio = now.year;
   }
 
   void setIseUploadingPhoto(bool val) {
     setState(() {
       isUploadingPhoto = val;
+    });
+  }
+
+  void setIsUploadingComprobante(bool val) {
+    setState(() {
+      isUploadingComprobante = val;
     });
   }
 
@@ -84,26 +95,27 @@ class _PagoScreenState extends State<PagoScreen> {
 
   Widget _currentMonthCard() {
     return CardContainer(
-        width: double.infinity,
-        height: _size.height * 0.30,
-        padding: EdgeInsets.all(30),
-        child: isLoadingComprobanteActual
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _titleCard(),
-                  SizedBox(height: 8.0),
-                  _currentMonthLabel(),
-                  SizedBox(height: 4.0),
-                  _rowInfoStatus(),
-                  SizedBox(height: 12.0),
-                  _actionButton(),
-                ],
-              ));
+      width: double.infinity,
+      height: _size.height * 0.30,
+      padding: EdgeInsets.all(30),
+      child: isLoadingComprobanteActual
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _titleCard(),
+                SizedBox(height: 8.0),
+                _currentMonthLabel(),
+                SizedBox(height: 4.0),
+                _rowInfoStatus(),
+                SizedBox(height: 12.0),
+                _actionButton(),
+              ],
+            ),
+    );
   }
 
   Widget _actionButton() {
@@ -116,12 +128,13 @@ class _PagoScreenState extends State<PagoScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        RaisedButton(
-          onPressed: handleSendComprobante,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
+        LoadingButton(
+          isLoading: isUploadingPhoto,
+          onPressed: trySendComprobante,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0),
+            color: kSecondaryColor,
           ),
-          color: kSecondaryColor,
           child: Row(
             children: [
               Text(
@@ -137,7 +150,7 @@ class _PagoScreenState extends State<PagoScreen> {
               )
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -160,11 +173,6 @@ class _PagoScreenState extends State<PagoScreen> {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(width: 10),
-              FaIcon(
-                FontAwesomeIcons.eye,
-                color: Colors.white,
-              )
             ],
           ),
         )
@@ -180,10 +188,6 @@ class _PagoScreenState extends State<PagoScreen> {
             ComprobanteDetailScreen(comprobante: comprobanteMesActual),
       ),
     );
-  }
-
-  void handleSendComprobante() {
-    trySendComprobante();
   }
 
   void trySendComprobante() async {
@@ -204,11 +208,17 @@ class _PagoScreenState extends State<PagoScreen> {
                 new ListTile(
                     leading: new Icon(Icons.camera),
                     title: new Text('Tomar foto'),
-                    onTap: () => {sendComprobante(CAMERA)}),
+                    onTap: () {
+                      Navigator.pop(context);
+                      sendComprobante(CAMERA);
+                    }),
                 new ListTile(
                   leading: new FaIcon(FontAwesomeIcons.images),
                   title: new Text('Seleccionar foto de la galeria'),
-                  onTap: () => {sendComprobante(GALLERY)},
+                  onTap: () {
+                    Navigator.pop(context);
+                    sendComprobante(GALLERY);
+                  },
                 ),
               ],
             ),
@@ -232,20 +242,26 @@ class _PagoScreenState extends State<PagoScreen> {
     // String photoUrl = await _getSource(userSourcePhotoOption);
     String photoUrl =
         "https://res.cloudinary.com/jovannyrch/image/upload/v1610467708/jumbtsjyuo4ccjjjeqko.jpg";
+    setIsUploadingComprobante(true);
     if (photoUrl.isNotEmpty) {
+      
       comprobante.foto = photoUrl;
       comprobante.anio = now.year;
       comprobante.mes = now.month;
-      comprobante.proveedor = "Googinet";
+      comprobante.proveedor = currentUser.proveedor;
       comprobante.fecha = now.toIso8601String();
       comprobante.status = StatusComprobante.enRevision;
-      comprobante.username = userPrefrences.username;
-      comprobante.userId = userPrefrences.email;
+      comprobante.username = currentUser.username;
+      comprobante.userId = currentUser.id;
       await comprobante.save();
+      setState(() {
+        this.comprobanteMesActual = comprobante;
+      });
       showSuccessMessage();
     } else {
       showErrorImageUrl();
     }
+    setIsUploadingComprobante(false);
   }
 
   void showErrorImageUrl() {
@@ -267,11 +283,12 @@ class _PagoScreenState extends State<PagoScreen> {
       }
       setIseUploadingPhoto(true);
       url = await subirImagen(pickedFile);
-      setIseUploadingPhoto(false);
     } catch (e) {
       showErrorUploadingPhoto();
+    }finally{
+      setIseUploadingPhoto(false);
     }
-    setIseUploadingPhoto(false);
+    
     return url;
   }
 

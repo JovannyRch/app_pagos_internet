@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pagos_internet/services/api_service.dart';
 import 'dart:convert';
 
@@ -14,15 +13,18 @@ class Usuario {
   String proveedor;
   String telefono;
   String username;
+  String type;
 
   static Api api = new Api("usuarios");
 
-  Usuario(
-      {this.id,
-      this.domicilioCompleto,
-      this.proveedor,
-      this.telefono,
-      this.username});
+  Usuario({
+    this.id = "",
+    this.domicilioCompleto = "",
+    this.proveedor = "",
+    this.telefono = "",
+    this.username = "",
+    this.type = "normal",
+  });
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
         id: json["id"],
@@ -30,6 +32,7 @@ class Usuario {
         telefono: json["telefono"],
         proveedor: json["proveedor"],
         username: json["username"],
+        type: json["type"],
       );
 
   factory Usuario.fromMap(Map<String, dynamic> json, String id) => Usuario(
@@ -38,6 +41,7 @@ class Usuario {
         telefono: json["telefono"],
         proveedor: json["proveedor"],
         username: json["username"],
+        type: json["type"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -46,14 +50,38 @@ class Usuario {
         "telefono": telefono,
         "proveedor": proveedor,
         "username": username,
+        "type": type,
       };
 
   static Future<void> saveUser(Usuario user) async {
-   return await api.setDocumentById(user.id, user.toJson());
+    return await api.setDocumentById(user.id, user.toJson());
   }
 
   static Future<Usuario> getById(String id) async {
     final resp = await api.getDocumentById(id);
     return Usuario.fromJson(resp.data());
+  }
+
+  static Usuario getIntervalaUser() {
+    return new Usuario(
+      username: "Intervala",
+      type: "admin",
+    );
+  }
+
+  static Usuario getGooginetUser() {
+    return new Usuario(
+      username: "Googinet",
+      type: "admin",
+    );
+  }
+
+  static Usuario loginAdminCredentials(String email, String password) {
+    if (email == "googinet@admin.com" && password == "googinet1") {
+      return getGooginetUser();
+    } else if (email == "intervala@admin.com" && password == "intervala2") {
+      return getIntervalaUser();
+    }
+    return null;
   }
 }

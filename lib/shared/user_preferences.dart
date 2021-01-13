@@ -43,7 +43,7 @@ class UserPrefences {
   }
 
   get token {
-    return _prefs.getInt('token') ?? "";
+    return _prefs.getString('token') ?? "";
   }
 
   set token(String token) {
@@ -55,11 +55,19 @@ class UserPrefences {
   }
 
   get provider {
-    return _prefs.getInt('provider') ?? "";
+    return _prefs.getString('provider') ?? "";
   }
 
   set provider(String provider) {
     _prefs.setString('provider', provider);
+  }
+
+  get type {
+    return _prefs.getString('type') ?? "";
+  }
+
+  set type(String type) {
+    _prefs.setString('type', type);
   }
 
   Future clear() async {

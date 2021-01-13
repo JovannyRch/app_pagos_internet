@@ -18,7 +18,6 @@ class ComprobanteDetailScreen extends StatefulWidget {
 class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    String monthName = getMonthName(widget.comprobante.mes);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kSecondaryColor,
@@ -31,23 +30,23 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   Widget _body() {
     return Container(
       padding: EdgeInsets.all(15.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _provider(),
-          SizedBox(height: 10.0),
-          _createtAt(),
-          SizedBox(height: 15.0),
-          _rowInfoStatus(),
-          SizedBox(height: 20.0),
-          _image(),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _provider(),
+            SizedBox(height: 10.0),
+            _createtAt(),
+            SizedBox(height: 15.0),
+            _rowInfoStatus(),
+            SizedBox(height: 20.0),
+            _image(),
+          ],
+        ),
       ),
     );
   }
-
-  
 
   Widget _provider() {
     return Text(

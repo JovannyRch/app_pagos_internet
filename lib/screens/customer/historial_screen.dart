@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
@@ -62,7 +63,19 @@ class _HistorialScreenState extends State<HistorialScreen> {
               color: kMainColor.withOpacity(0.6),
             ),
           ),
-          SizedBox(height: 30.0),
+          SizedBox(height: 3.0),
+         /*  Container(
+            child: Row(
+              children: [
+                Container(
+                  width: 30.0,
+                  height: 3.0,
+                  color: kSecondaryColor,
+                ),
+              ],
+            ),
+          ), */
+          SizedBox(height: 20.0),
           SingleChildScrollView(
             child: renderDataOrLoading(),
           )
@@ -79,14 +92,36 @@ class _HistorialScreenState extends State<HistorialScreen> {
     }
   }
 
-  Widget _emptyData() {
-    return Container();
-  }
-
   Widget _data() {
+    if (comprobantes.isEmpty) {
+      return _emptyData();
+    }
+
     return Column(children: [
       ...comprobantes.map((e) => _comprobanteWidget(e)).toList(),
     ]);
+  }
+
+  Widget _emptyData() {
+    return Expanded(
+      child: Container(
+        child: Column(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.database,
+              color: kMainColor.withOpacity(0.6),
+            ),
+            SizedBox(height: 20.0),
+            Text(
+              "No se encontraron registros",
+              style: TextStyle(
+                color: kMainColor.withOpacity(0.7),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _comprobanteWidget(Comprobante comprobante) {

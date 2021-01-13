@@ -10,6 +10,7 @@ class Storage {
     _userPrefences.username = user.username;
     _userPrefences.phone = user.telefono;
     _userPrefences.address = user.domicilioCompleto;
+    _userPrefences.type = user.type;
   }
 
   static Usuario getCurrentUser() {
@@ -19,7 +20,13 @@ class Storage {
       username: _userPrefences.username,
       telefono: _userPrefences.phone,
       domicilioCompleto: _userPrefences.address,
+      type: _userPrefences.type,
     );
     return usuario;
   }
+  
+  static String getProvider(){
+    return _userPrefences.provider;
+  }
+
 }
