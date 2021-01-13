@@ -23,3 +23,25 @@ String passwordValidator(String password) {
 
   return null;
 }
+
+
+String passwordConfirmValidator(String originalPassword, String passwordConfirmation) {
+
+  if(originalPassword.isEmpty){
+    return "Confirme su contraseña";
+  }
+
+  if (originalPassword != passwordConfirmation) {
+    return 'Las contraseñas no coiciden';
+  }
+  return null;
+}
+
+String valueRequired(String value){
+  
+  if(value.isEmpty){
+    return "Campo requerido";
+  }
+
+  return null;
+}

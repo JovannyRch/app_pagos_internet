@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/alerts.dart';
+import 'package:pagos_internet/helpers/storage.dart';
 import 'package:pagos_internet/helpers/validators.dart';
 import 'package:pagos_internet/models/item_proveedor_comprobante.dart';
+import 'package:pagos_internet/models/user_model.dart';
 import 'package:pagos_internet/screens/auth/login_screen.dart';
 import 'package:pagos_internet/screens/customer/home_customer_screen.dart';
 import 'package:pagos_internet/widget/InputWidget.dart';
@@ -161,20 +163,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
             _authTitle(),
             SizedBox(height: 16.0),
             Input(
-                text: "Nombre completo",
-                icon: Icons.person,
-                controller: this.username),
+              text: "Nombre completo",
+              icon: Icons.person,
+              controller: this.username,
+              validator: valueRequired,
+            ),
             Input(
-                text: "Domicilio completo",
-                icon: Icons.pin_drop,
-                controller: this.address,
-                ),
+              text: "Domicilio completo",
+              icon: Icons.pin_drop,
+              controller: this.address,
+              validator: valueRequired,
+            ),
             _dropDown(),
             Input(
               text: "Teléfono de contacto",
               icon: Icons.phone,
               controller: this.phone,
               keyboardType: TextInputType.phone,
+              validator: valueRequired,
             ),
             Input(
               text: "Correo electrónico",
@@ -184,15 +190,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
               keyboardType: TextInputType.emailAddress,
             ),
             Input(
-                text: "Contraseña",
-                icon: Icons.lock,
-                controller: this.password,
-                isPassword: true),
+              text: "Contraseña",
+              icon: Icons.lock,
+              controller: this.password,
+              validator: passwordValidator,
+              isPassword: true,
+            ),
             Input(
-                text: "Confirme su contraseña",
-                icon: Icons.lock,
-                controller: this.password2,
-                isPassword: true),
+              text: "Confirme su contraseña",
+              icon: Icons.lock,
+              controller: this.password2,
+              validator: (String value) {
+                return passwordConfirmValidator(this.password.text, value);
+              },
+              isPassword: true,
+            ),
             _loginButton(),
           ],
         ),
@@ -202,11 +214,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _dropDown() {
     return DropdownButton<ItemProveedor>(
-    
       hint: Text("Selecciona un proveedor"),
       isExpanded: true,
       value: providerSelected,
-      
       underline: Container(
         color: kMainColor.withOpacity(0.3),
         height: 1.0,
@@ -273,10 +283,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void checkInputDataOrTryRegister() {
-    tryRegister();
-  }
-
-  void tryRegister() {
     try {
       handleRegister();
     } catch (e) {
@@ -285,63 +291,78 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  Future saveUser() async {
+    Usuario user = new Usuario(
+        id: email.text.toLowerCase().trim(),
+        proveedor: providerSelected.name,
+        domicilioCompleto: address.text,
+        telefono: phone.text);
+    await Usuario.saveUser(user);
+    Storage.saveUser(user);
+  }
+
   void showLoginErrorAlert() {
     showOkAlertDialog(
         context: _globalContext, message: "Ocurrió un error al hacer el login");
   }
 
-
   void handleRegister() async {
-    try {
-      setCheckingUser(true);
-      if (!_formKey.currentState.validate()) {
-        return;
+    if (_formKey.currentState.validate()) {
+      if (providerSelected != null) {
+        tryRegister();
       } else {
-        _formKey.currentState.save();
-        UserCredential user = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: email.text.toLowerCase(), password: password.text)
-            .catchError((onError) {
-          print('ERRRRRRROOOOOOOOR');
-          print(onError);
-          showAlert(context, 'Algo salio mal...', onError.toString());
-        });
-        print(user.user.email);
-
-        if (user != null) {
-          print("El usuario fue registrado correctamente");
-          /* Usuario usuario = new Usuario(
-              tipoUsuario: "afiliado",
-              apellidoMaterno: _apellidoMaternoController.text,
-              apellidoPaterno: _apellidoPaternoController.text,
-              correo: _emailController.text,
-              licencia: "",
-              nombre: _nameController.text,
-              placa: "",
-              seguro: "",
-              tokenPush: tokenPush,
-            );
-            await usuario.save(_emailController.text); */
-          await user.user.updateProfile(displayName: username.text);
-          success(context, "Cuenta creada", "Su registro ha sido exitoso",
-              f: () {
-            Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
-          });
-          setCheckingUser(false);
-        }
+        showOkAlertDialog(
+            context: context,
+            title: "Datos incompletos",
+            message: "Seleccione un proveedor de servicio");
       }
-    } catch (e) {
-      print("Error");
-      print(e.toString());
-      setState(() {
-        setCheckingUser(false);
-      });
     }
   }
 
   void setCheckingUser(bool val) {
     setState(() {
       isCheckingUser = val;
+    });
+  }
+
+  void tryRegister() async {
+    try {
+      setCheckingUser(true);
+      UserCredential user = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: email.text.toLowerCase().trim(), password: password.text)
+          .catchError((onError) {
+        showAlert(context, 'Algo salio mal...', onError.toString());
+      });
+
+      if (user != null) {
+        await user.user.updateProfile(displayName: username.text);
+        saveUserDetails();
+      }
+    } catch (e) {
+      handleErrorRegister(e);
+    }
+  }
+
+  void saveUserDetails() async {
+    await saveUser();
+
+    success(
+      context,
+      "Cuenta creada",
+      "Su registro ha sido exitoso",
+      f: () {
+        Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
+      },
+    );
+    setCheckingUser(false);
+  }
+
+  void handleErrorRegister(e) {
+    print("Error");
+    print(e.toString());
+    setState(() {
+      setCheckingUser(false);
     });
   }
 }

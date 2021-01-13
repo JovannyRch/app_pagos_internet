@@ -2,7 +2,9 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pagos_internet/const/conts.dart';
+import 'package:pagos_internet/helpers/storage.dart';
 import 'package:pagos_internet/helpers/validators.dart';
+import 'package:pagos_internet/models/user_model.dart';
 import 'package:pagos_internet/screens/auth/login_controller.dart';
 import 'package:pagos_internet/screens/auth/register_screen.dart';
 import 'package:pagos_internet/screens/customer/home_customer_screen.dart';
@@ -189,8 +191,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  
-
   void checkInputData() {
     if (this.email.text.isEmpty || this.password.text.isEmpty) {
       this.showInvalidAlerts();
@@ -225,17 +225,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void handleLogin() async {
-    setCheckingUser(true);
-      UserCredential user =
-        await signIn(email.text, password.text);
-    if (user != null) {
-      saveUserInStorate(user);
-      Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
+    if (_formKey.currentState.validate()) {
+      setCheckingUser(true);
+      UserCredential user = await signIn(email.text, password.text);
+      if (user != null) {
+        Usuario usuario = await Usuario.getById(user.user.email); 
+        Storage.saveUser(usuario);
+        Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
+      }
+      setCheckingUser(false);
     }
-    setCheckingUser(false);
   }
-
-
 
   void setCheckingUser(bool val) {
     setState(() {

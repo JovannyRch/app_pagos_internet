@@ -26,6 +26,14 @@ class UserPrefences {
     _prefs.setString('email', email);
   }
 
+  get phone {
+    return _prefs.getString("phone") ?? '';
+  }
+
+  set phone(String phone) {
+    _prefs.setString('phone', phone);
+  }
+
   get token {
     return _prefs.getInt('token') ?? "";
   }
