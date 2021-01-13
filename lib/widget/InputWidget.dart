@@ -9,6 +9,8 @@ class Input extends StatelessWidget {
   final Function validator;
   final String helperText;
   final TextInputType keyboardType;
+  final TextCapitalization textCapitalization;
+
   Input({
     @required this.text,
     @required this.icon,
@@ -17,6 +19,7 @@ class Input extends StatelessWidget {
     this.validator,
     this.helperText,
     this.keyboardType = TextInputType.text,
+    this.textCapitalization = TextCapitalization.none,
   });
   @override
   Widget build(BuildContext context) {
@@ -42,6 +45,7 @@ class Input extends StatelessWidget {
         borderRadius: BorderRadius.circular(4.0),
       ),
       child: TextFormField(
+        textCapitalization: textCapitalization,
         controller: controller,
         obscureText: isPassword,
         validator: this.validator,

@@ -19,7 +19,7 @@ class UserPrefences {
   }
 
   String get email {
-    return _prefs.containsKey('email')? _prefs.getString('email') :'';
+    return _prefs.containsKey('email') ? _prefs.getString('email') : '';
   }
 
   set email(String email) {
@@ -32,6 +32,14 @@ class UserPrefences {
 
   set phone(String phone) {
     _prefs.setString('phone', phone);
+  }
+
+  get address {
+    return _prefs.getString("address") ?? '';
+  }
+
+  set address(String address) {
+    _prefs.setString('address', address);
   }
 
   get token {

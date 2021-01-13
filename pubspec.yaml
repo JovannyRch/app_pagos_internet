@@ -25,6 +25,8 @@ dependencies:
   compressimage: ^0.1.1
   image_picker: ^0.6.7+21
   mime_type: ^0.3.2
+  loading_button: ^0.0.3+1
+  
 
 dev_dependencies:
   flutter_test:

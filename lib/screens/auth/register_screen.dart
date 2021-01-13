@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_button/loading_button.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/alerts.dart';
 import 'package:pagos_internet/helpers/storage.dart';
@@ -56,7 +57,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.only(top: _size.height * 0.1),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
@@ -83,10 +83,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _logo(),
-        /*   _image(), */
+        /*  // _logo(),
+        _image(), */
         _form(),
         _containerLinkRegister(),
+        SizedBox(
+          height: 80.0,
+        ),
       ],
     );
   }
@@ -124,21 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void handleNavigationLoginClick() {
     Navigator.pop(context, LoginScreen.routeName);
   }
-
-  Widget _logo() {
-    return Container(
-      child: Text(
-        "Pagos de internet",
-        style: TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 2.0,
-          color: kMainColor,
-        ),
-      ),
-    );
-  }
-
+/* 
   Widget _image() {
     return Container(
       padding: EdgeInsets.only(top: _size.height * 0.06),
@@ -147,7 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         height: _size.height * 0.10,
       ),
     );
-  }
+  } */
 
   Widget _form() {
     return Form(
@@ -167,12 +156,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               icon: Icons.person,
               controller: this.username,
               validator: valueRequired,
+              textCapitalization: TextCapitalization.words,
             ),
             Input(
               text: "Domicilio completo",
               icon: Icons.pin_drop,
               controller: this.address,
               validator: valueRequired,
+              textCapitalization: TextCapitalization.words,
             ),
             _dropDown(),
             Input(
@@ -205,7 +196,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               },
               isPassword: true,
             ),
-            _loginButton(),
+            SizedBox(height: 15.0),
+            _formSubmitButton(),
           ],
         ),
       ),
@@ -262,22 +254,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _loginButton() {
-    return Container(
-      width: double.infinity,
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
+  Widget _formSubmitButton() {
+    return Center(
+      child: LoadingButton(
+        onPressed: checkInputDataOrTryRegister,
+        isLoading: isCheckingUser,
+        decoration: BoxDecoration(
+          color: kSecondaryColor,
+          borderRadius: BorderRadius.circular(20.0),
         ),
-        onPressed: !isCheckingUser ? checkInputDataOrTryRegister : null,
-        color: kSecondaryColor,
-        textColor: Colors.white,
-        child: !isCheckingUser
-            ? Text(
-                "Registrarse".toUpperCase(),
-                style: TextStyle(fontSize: 14),
-              )
-            : CircularProgressIndicator(),
+        child: Text(
+          "Registrarse".toUpperCase(),
+          style: TextStyle(fontSize: 14),
+        ),
       ),
     );
   }
@@ -289,16 +278,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showLoginErrorAlert();
       setCheckingUser(false);
     }
-  }
-
-  Future saveUser() async {
-    Usuario user = new Usuario(
-        id: email.text.toLowerCase().trim(),
-        proveedor: providerSelected.name,
-        domicilioCompleto: address.text,
-        telefono: phone.text);
-    await Usuario.saveUser(user);
-    Storage.saveUser(user);
   }
 
   void showLoginErrorAlert() {
@@ -314,7 +293,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         showOkAlertDialog(
             context: context,
             title: "Datos incompletos",
-            message: "Seleccione un proveedor de servicio");
+            message: "Seleccione su proveedor de servicio de internet");
       }
     }
   }
@@ -345,17 +324,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void saveUserDetails() async {
-    await saveUser();
+    Usuario user = new Usuario(
+        id: email.text.toLowerCase().trim(),
+        proveedor: providerSelected.name,
+        domicilioCompleto: address.text,
+        username: username.text,
+        telefono: phone.text);
+    await Usuario.saveUser(user);
+    Storage.saveUser(user);
+    showSuccessRegister();
+  }
 
-    success(
+  void showSuccessRegister() {
+    Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
+    /*  success(
       context,
       "Cuenta creada",
       "Su registro ha sido exitoso",
       f: () {
-        Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
+       
       },
     );
-    setCheckingUser(false);
+    setCheckingUser(false); */
   }
 
   void handleErrorRegister(e) {

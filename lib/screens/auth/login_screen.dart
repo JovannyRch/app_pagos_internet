@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_button/loading_button.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/storage.dart';
 import 'package:pagos_internet/helpers/validators.dart';
@@ -153,6 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
               isPassword: true,
               validator: passwordValidator,
             ),
+            SizedBox(height: 15.0),
             _loginButton(),
           ],
         ),
@@ -172,21 +174,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _loginButton() {
-    return Container(
-      width: double.infinity,
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
+    return Center(
+      child: LoadingButton(
+        onPressed: checkInputData,
+        isLoading: isCheckingUser,
+        decoration: BoxDecoration(
+          color: kSecondaryColor,
+          borderRadius: BorderRadius.circular(20.0),
         ),
-        onPressed: !isCheckingUser ? checkInputData : null,
-        color: kSecondaryColor,
-        textColor: Colors.white,
-        child: !isCheckingUser
-            ? Text(
-                "Iniciar sesión".toUpperCase(),
-                style: TextStyle(fontSize: 14),
-              )
-            : CircularProgressIndicator(),
+        child: Text(
+          "Iniciar sesión".toUpperCase(),
+          style: TextStyle(fontSize: 14),
+        ),
       ),
     );
   }
@@ -227,9 +226,11 @@ class _LoginScreenState extends State<LoginScreen> {
   void handleLogin() async {
     if (_formKey.currentState.validate()) {
       setCheckingUser(true);
-      UserCredential user = await signIn(email.text, password.text);
+      UserCredential user =
+          await signIn(email.text.toLowerCase().trim(), password.text);
       if (user != null) {
-        Usuario usuario = await Usuario.getById(user.user.email); 
+        Usuario usuario =
+            await Usuario.getById(user.user.email.toLowerCase().trim());
         Storage.saveUser(usuario);
         Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
       }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pagos_internet/services/api_service.dart';
 import 'dart:convert';
 
@@ -47,8 +48,8 @@ class Usuario {
         "username": username,
       };
 
-  static Future saveUser(Usuario user) async {
-    return api.setDocumentById(user.id, user.toJson());
+  static Future<void> saveUser(Usuario user) async {
+   return await api.setDocumentById(user.id, user.toJson());
   }
 
   static Future<Usuario> getById(String id) async {

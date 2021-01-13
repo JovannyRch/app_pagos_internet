@@ -53,6 +53,7 @@ class _PagoScreenState extends State<PagoScreen> {
   }
 
   void initComprobante() {
+    comprobanteMesActual = new Comprobante();
     comprobanteMesActual.mes = now.month;
     comprobanteMesActual.proveedor = "Googinet";
     comprobanteMesActual.status = "noPagado";
