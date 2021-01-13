@@ -4,6 +4,7 @@ import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
+import 'package:pagos_internet/widget/ComprobanteTile.dart';
 
 class HistorialScreen extends StatefulWidget {
   HistorialScreen({Key key}) : super(key: key);
@@ -64,7 +65,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
             ),
           ),
           SizedBox(height: 3.0),
-         /*  Container(
+          /*  Container(
             child: Row(
               children: [
                 Container(
@@ -98,7 +99,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
     }
 
     return Column(children: [
-      ...comprobantes.map((e) => _comprobanteWidget(e)).toList(),
+      ...comprobantes.map((c) => ComprobanteTile(comprobante: c)).toList(),
     ]);
   }
 
@@ -122,53 +123,5 @@ class _HistorialScreenState extends State<HistorialScreen> {
         ),
       ),
     );
-  }
-
-  Widget _comprobanteWidget(Comprobante comprobante) {
-    String monthName = getMonthName(comprobante.mes);
-    return ListTile(
-      onTap: () {
-        handleClickDetailComprobante(comprobante);
-      },
-      title: Row(
-        children: [
-          Text("$monthName ${comprobante.anio}"),
-          SizedBox(width: 10.0),
-          Container(
-            height: 10,
-            width: 10,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _getBackgroundColorByStatus(comprobante.status),
-            ),
-          ),
-        ],
-      ),
-      trailing: Icon(
-        Icons.arrow_forward_ios,
-        color: Colors.grey.shade300,
-      ),
-    );
-  }
-
-  void handleClickDetailComprobante(Comprobante comprobante) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              ComprobanteDetailScreen(comprobante: comprobante)),
-    );
-  }
-
-  Color _getBackgroundColorByStatus(String status) {
-    switch (status) {
-      case "enRevision":
-        return Colors.yellow;
-      case "noPagado":
-        return Colors.red.shade400;
-      case "pagado":
-        return Colors.transparent;
-    }
-    return Colors.transparent;
   }
 }

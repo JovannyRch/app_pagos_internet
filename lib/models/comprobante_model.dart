@@ -102,6 +102,11 @@ class Comprobante {
         .toList();
   }
 
-  
+  static Future<List<Comprobante>> getByStatus(String status) async {
+    final resp = await api.getWhere('status', status);
+    return resp.docs
+        .map((doc) => Comprobante.fromMap(doc.data(), doc.id))
+        .toList();
+  }
 
 }

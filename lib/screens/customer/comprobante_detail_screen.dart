@@ -4,11 +4,12 @@ import 'package:pagos_internet/helpers/date.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/models/fecha_model.dart';
+import 'package:pinch_zoom/pinch_zoom.dart';
 
 class ComprobanteDetailScreen extends StatefulWidget {
   final Comprobante comprobante;
-
-  ComprobanteDetailScreen({this.comprobante});
+  final bool isAdmin;
+  ComprobanteDetailScreen({this.comprobante, this.isAdmin = false});
 
   @override
   _ComprobanteDetailScreenState createState() =>
@@ -35,9 +36,10 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _provider(),
+            _paymentDate(),
             SizedBox(height: 10.0),
             _createtAt(),
+            widget.isAdmin ? _username() : Container(),
             SizedBox(height: 15.0),
             _rowInfoStatus(),
             SizedBox(height: 20.0),
@@ -48,7 +50,11 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
     );
   }
 
-  Widget _provider() {
+  Widget _username() {
+    return Text("Usuario: ");
+  }
+
+  Widget _paymentDate() {
     return Text(
       "${getMonthName(widget.comprobante.mes)} ${widget.comprobante.anio}",
       style: TextStyle(
@@ -69,13 +75,12 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   }
 
   Widget _image() {
-    return Container(
-      /* padding: EdgeInsets.all(20.0), */
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(120.0),
-      ),
-      child: FadeInImage.assetNetwork(
+    return PinchZoom(
+      image: FadeInImage.assetNetwork(
           placeholder: "assets/loader.gif", image: widget.comprobante.foto),
+      zoomedBackgroundColor: Colors.black.withOpacity(0.5),
+      resetDuration: const Duration(milliseconds: 100),
+      maxScale: 2.5,
     );
   }
 

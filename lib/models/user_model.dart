@@ -66,6 +66,7 @@ class Usuario {
     return new Usuario(
       username: "Intervala",
       type: "admin",
+      id: "intervala@admin.com"
     );
   }
 
@@ -73,6 +74,7 @@ class Usuario {
     return new Usuario(
       username: "Googinet",
       type: "admin",
+      id: "googinet@admin.com"
     );
   }
 

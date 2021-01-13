@@ -57,12 +57,13 @@ class _PagoScreenState extends State<PagoScreen> {
     setIsLoadingComprobanteActual(false);
   }
 
-  void initComprobante() {
+  void initComprobante() async {
     comprobanteMesActual = new Comprobante();
     comprobanteMesActual.proveedor = this.currentUser.proveedor;
     comprobanteMesActual.status = "noPagado";
     comprobanteMesActual.mes = now.month;
     comprobanteMesActual.anio = now.year;
+    await comprobanteMesActual.save();
   }
 
   void setIseUploadingPhoto(bool val) {

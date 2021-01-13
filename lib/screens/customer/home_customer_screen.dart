@@ -3,6 +3,7 @@ import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/screens/customer/historial_screen.dart';
 import 'package:pagos_internet/screens/customer/pago_screen.dart';
 import 'package:pagos_internet/screens/profile_screen.dart';
+import 'package:pagos_internet/widget/ProfileButton.dart';
 
 class HomeCustumer extends StatefulWidget {
   static String routeName = "/customer";
@@ -13,7 +14,7 @@ class HomeCustumer extends StatefulWidget {
 }
 
 class _HomeCustumerState extends State<HomeCustumer> {
-  int _selectedIndex = 0;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class _HomeCustumerState extends State<HomeCustumer> {
         backgroundColor: kSecondaryColor,
         title: Text("Pagos Internet"),
         actions: [
-          _perfilButton(),
+          ProfileButton(),
         ],
       ),
       body: _body(),
@@ -56,14 +57,4 @@ class _HomeCustumerState extends State<HomeCustumer> {
     );
   }
 
-  Widget _perfilButton() {
-    return Container(
-      child: IconButton(
-          icon: Icon(Icons.person), onPressed: handlePerfilButtonClick),
-    );
-  }
-
-  void handlePerfilButtonClick() {
-    Navigator.pushNamed(context, ProfileScreen.routeName);
-  }
 }

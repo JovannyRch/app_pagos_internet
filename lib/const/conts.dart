@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pagos_internet/models/comprobante_model.dart';
 
 const kMainColor =  Color(0xFF504F60);
 
@@ -20,3 +19,8 @@ const GALLERY = 2;
     }
     return Colors.white;
   }
+
+
+const NO_PAGADO = "noPagado";
+const EN_REVISION = "enRevision";
+const PAGADO = "pagado";

@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.only(top: _size.height * 0.06),
       child: Image.asset(
         'assets/auth-image.png',
-        width: _size.width * 0.6,
+        width: _size.width * 0.45,
       ),
     );
   }
@@ -243,8 +243,8 @@ class _LoginScreenState extends State<LoginScreen> {
           showNoUserFoundedMessage();
         }
       } else {
-        Navigator.pushReplacementNamed(context, HomeAdminScreen.routeName);
         Storage.saveUser(admUser);
+        Navigator.pushReplacementNamed(context, HomeAdminScreen.routeName);
       }
       setCheckingUser(false);
     }
