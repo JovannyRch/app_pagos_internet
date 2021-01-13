@@ -14,7 +14,7 @@ class _ComprobantesAdminScreenState extends State<ComprobantesAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey.shade100,
@@ -25,7 +25,6 @@ class _ComprobantesAdminScreenState extends State<ComprobantesAdminScreen> {
             labelStyle: TextStyle(fontSize: 11.0, fontWeight: FontWeight.w700),
             tabs: [
               Tab(text: "En revisión"),
-              Tab(text: "No pagados"),
               Tab(text: "Pagados"),
             ],
           ),
@@ -35,7 +34,6 @@ class _ComprobantesAdminScreenState extends State<ComprobantesAdminScreen> {
         body: TabBarView(
           children: [
             ComprobanteList(type: EN_REVISION),
-            ComprobanteList(type: NO_PAGADO),
             ComprobanteList(type: PAGADO),
           ],
         ),

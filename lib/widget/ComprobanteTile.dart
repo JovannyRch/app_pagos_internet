@@ -30,6 +30,7 @@ class ComprobanteTile extends StatelessWidget {
           ),
         ],
       ),
+      subtitle: Text("${comprobante.username??''}"),
       trailing: Icon(
         Icons.arrow_forward_ios,
         color: Colors.grey.shade300,

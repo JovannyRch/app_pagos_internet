@@ -1,7 +1,10 @@
+import 'package:pagos_internet/const/conts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserPrefences {
   static final UserPrefences _instance = new UserPrefences._internal();
+  
+  
 
   UserPrefences._internal();
   SharedPreferences _prefs;
@@ -77,4 +80,9 @@ class UserPrefences {
   factory UserPrefences() {
     return _instance;
   }
+
+  bool get isAdmin{
+    return ADMIN_USERS.contains(_prefs.getString('email'));
+  }
+
 }

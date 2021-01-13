@@ -9,6 +9,7 @@ import 'package:pinch_zoom/pinch_zoom.dart';
 class ComprobanteDetailScreen extends StatefulWidget {
   final Comprobante comprobante;
   final bool isAdmin;
+
   ComprobanteDetailScreen({this.comprobante, this.isAdmin = false});
 
   @override
@@ -17,18 +18,46 @@ class ComprobanteDetailScreen extends StatefulWidget {
 }
 
 class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
+  bool isAproving = false;
+  Size _size;
+  void setIsAproving(bool val) {
+    setState(() {
+      isAproving = val;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kSecondaryColor,
         title: Text(widget.comprobante.proveedor),
       ),
       body: _body(),
+      floatingActionButton: widget.comprobante.status == EN_REVISION
+          ? isAproving
+              ? null
+              : FloatingActionButton(
+                  onPressed: handleAprobarComprobante,
+                  backgroundColor: Colors.green,
+                  child: Icon(Icons.check),
+                )
+          : null,
     );
   }
 
+  void handleAprobarComprobante() async {
+    setIsAproving(true);
+    await this.widget.comprobante.aprobar();
+    setIsAproving(false);
+  }
+
   Widget _body() {
+    if (isAproving) {
+      return _waiting();
+    }
+
     return Container(
       padding: EdgeInsets.all(15.0),
       child: SingleChildScrollView(
@@ -37,9 +66,9 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _paymentDate(),
+            widget.isAdmin ? _username() : Container(),
             SizedBox(height: 10.0),
             _createtAt(),
-            widget.isAdmin ? _username() : Container(),
             SizedBox(height: 15.0),
             _rowInfoStatus(),
             SizedBox(height: 20.0),
@@ -50,8 +79,38 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
     );
   }
 
+  Widget _waiting() {
+    return Center(
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 20.0),
+            Text(
+              "Aprobando comprobante",
+              style: TextStyle(
+                color: kMainColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _username() {
-    return Text("Usuario: ");
+    return Container(
+      margin: EdgeInsets.only(bottom: 10.0, top: 5.0),
+      child: Text(
+        "${widget.comprobante.username}",
+        style: TextStyle(
+          color: kMainColor,
+          fontSize: 17.0,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 
   Widget _paymentDate() {
@@ -67,7 +126,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   Widget _createtAt() {
     Fecha fecha = formatDate(widget.comprobante.fecha);
     return Text(
-      "Enviado el: $fecha",
+      "Enviado el $fecha",
       style: TextStyle(
         color: kMainColor.withOpacity(0.7),
       ),
@@ -75,22 +134,34 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   }
 
   Widget _image() {
-    return PinchZoom(
-      image: FadeInImage.assetNetwork(
-          placeholder: "assets/loader.gif", image: widget.comprobante.foto),
-      zoomedBackgroundColor: Colors.black.withOpacity(0.5),
-      resetDuration: const Duration(milliseconds: 100),
-      maxScale: 2.5,
+    if (widget.comprobante.foto == null) return _emptyPhoto();
+    return Container(
+      height: _size.height*0.5,
+      width: double.infinity,
+      child: PinchZoom(
+        image: FadeInImage.assetNetwork(
+            placeholder: "assets/loader.gif", image: widget.comprobante.foto),
+        zoomedBackgroundColor: Colors.black.withOpacity(0.5),
+        resetDuration: const Duration(milliseconds: 100),
+        maxScale: 2.5,
+      ),
+    );
+  }
+
+  Widget _emptyPhoto() {
+    return Container(
+      child: Text("Sin foto"),
     );
   }
 
   Widget _rowInfoStatus() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _currentMonthStatus(),
         SizedBox(width: 10.0),
-        _labelStatus(),
+        Center(child: _labelStatus()),
       ],
     );
   }
@@ -123,8 +194,8 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
 
   Widget _currentMonthStatus() {
     return Container(
-      width: 10,
-      height: 10,
+      width: 15,
+      height: 15,
       margin: EdgeInsets.only(top: 20.0),
       decoration: BoxDecoration(
         shape: BoxShape.circle,

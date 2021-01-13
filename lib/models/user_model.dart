@@ -1,3 +1,4 @@
+import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/services/api_service.dart';
 import 'dart:convert';
 
@@ -66,7 +67,7 @@ class Usuario {
     return new Usuario(
       username: "Intervala",
       type: "admin",
-      id: "intervala@admin.com"
+      id: EMAIL_INTERVALA
     );
   }
 
@@ -74,7 +75,7 @@ class Usuario {
     return new Usuario(
       username: "Googinet",
       type: "admin",
-      id: "googinet@admin.com"
+      id: EMAIL_GOOGINET,
     );
   }
 

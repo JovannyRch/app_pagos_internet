@@ -58,6 +58,7 @@ class _ComprobanteListState extends State<ComprobanteList> {
     return Container(
       width: double.infinity,
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           children: [
             ...comprobantes

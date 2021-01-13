@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/services/api_service.dart';
 import 'package:pagos_internet/shared/user_preferences.dart';
 
@@ -83,6 +84,14 @@ class Comprobante {
     return await api.addDocument(this.toJson());
   }
 
+  Future aprobar () async {
+    this.status = PAGADO;
+    var data = {
+      'status' : PAGADO,
+    };
+    await api.updateDocument(this.id, data);
+  }
+
   static Future<List<Comprobante>> getByUser() async {
     final resp = await api.getWhere('userId', _preferences.email);
     return resp.docs
@@ -108,5 +117,8 @@ class Comprobante {
         .map((doc) => Comprobante.fromMap(doc.data(), doc.id))
         .toList();
   }
+
+
+  
 
 }

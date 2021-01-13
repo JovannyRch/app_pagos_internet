@@ -37,7 +37,7 @@ class Api {
     return ref.doc(id).set(data);
   }
 
-  Future<void> updateDocument(Map data, String id) {
+  Future<void> updateDocument( String id,Map data) {
     return ref.doc(id).update(data);
   }
 

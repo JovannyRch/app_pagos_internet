@@ -24,3 +24,14 @@ const GALLERY = 2;
 const NO_PAGADO = "noPagado";
 const EN_REVISION = "enRevision";
 const PAGADO = "pagado";
+
+
+const EMAIL_GOOGINET = "googinet@admin.com";
+const EMAIL_INTERVALA = "intervala@admin.com";
+
+
+const List<String> ADMIN_USERS = [
+    EMAIL_GOOGINET,
+    EMAIL_INTERVALA,
+  ];
+   
