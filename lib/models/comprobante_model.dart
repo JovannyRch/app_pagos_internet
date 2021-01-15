@@ -92,8 +92,12 @@ class Comprobante {
     await api.updateDocument(this.id, data);
   }
 
-  static Future<List<Comprobante>> getByUser() async {
-    final resp = await api.getWhere('userId', _preferences.email);
+  static Future<List<Comprobante>> getByCurrentUser() async {
+    return getByUser(_preferences.email);
+  }
+
+  static Future<List<Comprobante>> getByUser(String userId) async {
+    final resp = await api.getWhere('userId',userId);
     return resp.docs
         .map((doc) => Comprobante.fromMap(doc.data(), doc.id))
         .toList();

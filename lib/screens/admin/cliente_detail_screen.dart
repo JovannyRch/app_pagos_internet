@@ -5,6 +5,7 @@ import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/models/user_model.dart';
+import 'package:pagos_internet/screens/admin/cliente_history_screen.dart';
 import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
 import 'package:pagos_internet/widget/CardTitle.dart';
 import 'package:pagos_internet/widget/LastPayment.dart';
@@ -35,13 +36,13 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
     );
   }
 
-  void handleHistoryPayment(){
-   /*  Navigator.push(
+  void handleHistoryPayment() {
+    Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ComprobanteDetailScreen(comprobante: ,),
+        builder: (context) => ClienteHistoryScreen(cliente: widget.cliente),
       ),
-    ); */
+    );
   }
 
   Widget _body() {

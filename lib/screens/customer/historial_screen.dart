@@ -39,7 +39,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
   void fetchData() async {
     setIsFetchingData(true);
     try {
-      this.comprobantes = await Comprobante.getByUser();
+      this.comprobantes = await Comprobante.getByCurrentUser();
     } catch (e) {
       setIsErrorFetchingData(true);
       print("Ocurrio un error al obtener los comprobantes del usurio");
