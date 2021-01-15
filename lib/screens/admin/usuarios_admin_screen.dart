@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/storage.dart';
 import 'package:pagos_internet/models/user_model.dart';
 import 'package:pagos_internet/widget/EmtpyData.dart';
@@ -36,13 +36,17 @@ class _UsuariosAdminScreenState extends State<UsuariosAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text("Usuario Screen"),
-    );
+    return _body();
   }
 
+  Widget _body() {
+    if (isFetchingUsers) {
+      return _loading();
+    }
+    return _data();
+  }
 
-  Widget _loading(){
+  Widget _loading() {
     return Container(
       child: Center(
         child: CircularProgressIndicator(),
@@ -50,15 +54,72 @@ class _UsuariosAdminScreenState extends State<UsuariosAdminScreen> {
     );
   }
 
-  
-  Widget _data(){
-    return Container();
+  Widget _data() {
+    if (clientes.length == 0) {
+      return _emptyData();
+    }
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            ...clientes.map((e) => _userCard(e)).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget _emptyData(){
+  Widget _userCard(Usuario cliente) {
+    return ListTile(
+      onTap: (){
+        handleUserClick(cliente);
+      },
+      title: Text(
+        "${cliente.username}",
+        style: TextStyle(color: kMainColor),
+      ),
+      subtitle: Text("${cliente.id}"),
+      trailing: Icon(Icons.arrow_forward_ios),
+    );
+  }
+
+  void handleUserClick(Usuario cliente){
+    
+  }
+
+  Widget _emptyData() {
     return EmtpyData();
   }
-
 }
 
+/*
 
+Container(
+      width: double.infinity,
+      height: 50.0,
+      decoration: BoxDecoration(
+        border: Border(
+            bottom: BorderSide(color: kMainColor.withOpacity(0.2), width: 1.0)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "${cliente.username}",
+            style: TextStyle(
+              color: kMainColor,
+              fontSize: 18.0,
+              fontWeight: FontWeight.w600,  
+            ),
+            overflow: TextOverflow.ellipsis,
+            
+          ),
+          SizedBox(height: 5.0,),
+          Text("${cliente.id}", style: TextStyle(),),
+        ],
+      ),
+    );
+
+*/
