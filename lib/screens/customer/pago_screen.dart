@@ -48,23 +48,10 @@ class _PagoScreenState extends State<PagoScreen> {
 
   void fetchCurrentComprobante() async {
     setIsLoadingComprobanteActual(true);
-    List<Comprobante> comprobantes = await Comprobante.getCurrentMonthByCurrentUser();
-    this.comprobanteMesActual =
-        comprobantes.length > 0 ? comprobantes.first : null;
-    if (comprobanteMesActual == null) {
-      this.initComprobante();
-    }
+    this.comprobanteMesActual = await Comprobante.getCurrentMonthByCurrentUser(); 
     setIsLoadingComprobanteActual(false);
   }
 
-  void initComprobante() async {
-    comprobanteMesActual = new Comprobante();
-    comprobanteMesActual.proveedor = this.currentUser.proveedor;
-    comprobanteMesActual.status = "noPagado";
-    comprobanteMesActual.mes = now.month;
-    comprobanteMesActual.anio = now.year;
-    await comprobanteMesActual.save();
-  }
 
   void setIseUploadingPhoto(bool val) {
     setState(() {

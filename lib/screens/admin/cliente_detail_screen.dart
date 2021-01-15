@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pagos_internet/const/conts.dart';
+import 'package:pagos_internet/helpers/months.dart';
+import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/models/user_model.dart';
+import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
+import 'package:pagos_internet/widget/CardTitle.dart';
+import 'package:pagos_internet/widget/LastPayment.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ClienteScreenDetail extends StatefulWidget {
@@ -22,7 +27,21 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
         title: Text("Detalles del cliente"),
       ),
       body: _body(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: handleHistoryPayment,
+        backgroundColor: kSecondaryColor,
+        child: FaIcon(FontAwesomeIcons.tasks),
+      ),
     );
+  }
+
+  void handleHistoryPayment(){
+   /*  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ComprobanteDetailScreen(comprobante: ,),
+      ),
+    ); */
   }
 
   Widget _body() {
@@ -36,28 +55,9 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
           children: [
             _username(),
             _cardInfo(),
-            _cardLastPayment(),
+            LastPaymentInfo(userId: widget.cliente.id),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _cardLastPayment() {
-    return Container(
-      height: 160.0,
-      width: double.infinity,
-      padding: EdgeInsets.all(15.0),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _cardTitle("Pago mes actual"),
-        ],
       ),
     );
   }
@@ -67,7 +67,7 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
       height: 180.0,
       width: double.infinity,
       padding: EdgeInsets.all(15.0),
-      margin: EdgeInsets.only(bottom: 15.0),
+      margin: EdgeInsets.only(bottom: 25.0),
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(20.0),
@@ -165,15 +165,7 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
   }
 
   Widget _cardTitle(String title) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: kMainColor.withOpacity(0.7),
-        ),
-      ),
-    );
+    return CardTitle(title: title);
   }
 
   Widget _tileInfoWithIcon(IconData icon, String value, {Widget action}) {
@@ -195,6 +187,7 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
               style: TextStyle(
                 fontWeight: FontWeight.w400,
                 letterSpacing: 1,
+                fontSize: 13.0,
               ),
             ),
           ),

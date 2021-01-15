@@ -84,10 +84,10 @@ class Comprobante {
     return await api.addDocument(this.toJson());
   }
 
-  Future aprobar () async {
+  Future aprobar() async {
     this.status = PAGADO;
     var data = {
-      'status' : PAGADO,
+      'status': PAGADO,
     };
     await api.updateDocument(this.id, data);
   }
@@ -99,22 +99,34 @@ class Comprobante {
         .toList();
   }
 
-   static Future<List<Comprobante>> getCurrentMonthByCurrentUser() async {
+  static Future<Comprobante> getCurrentMonthByCurrentUser() async {
     return getCurrentMonthByUser(_preferences.email);
   }
 
-  static Future<List<Comprobante>> getCurrentMonthByUser(String userId) async {
+  static Future<Comprobante> getCurrentMonthByUser(
+      String userId) async {
     var now = DateTime.now();
     final resp = await api.getWheres({
-      'userId' : userId,
-      'mes' : now.month,
-      'anio' : now.year,
+      'userId': userId,
+      'mes': now.month,
+      'anio': now.year,
     });
-    return resp.docs
-        .map((doc) => Comprobante.fromMap(doc.data(), doc.id))
-        .toList();
+
+    if (resp.docs.length == 0) {
+      Comprobante comprobanteMesActual = new Comprobante();
+      comprobanteMesActual.proveedor = _preferences.provider;
+      comprobanteMesActual.status = "noPagado";
+      comprobanteMesActual.mes = now.month;
+      comprobanteMesActual.anio = now.year;
+      await comprobanteMesActual.save();
+      return comprobanteMesActual;
+    } else {
+      return resp.docs
+          .map((doc) => Comprobante.fromMap(doc.data(), doc.id))
+          .toList()
+          .first;
+    }
   }
-  
 
   static Future<List<Comprobante>> getByStatus(String status) async {
     final resp = await api.getWhere('status', status);
@@ -122,8 +134,4 @@ class Comprobante {
         .map((doc) => Comprobante.fromMap(doc.data(), doc.id))
         .toList();
   }
-
-
-  
-
 }

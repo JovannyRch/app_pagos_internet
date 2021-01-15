@@ -35,7 +35,15 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
         title: Text(widget.comprobante.proveedor),
       ),
       body: _body(),
-      floatingActionButton: widget.comprobante.status == EN_REVISION
+      floatingActionButton: _floatingActionButton(),
+    );
+  }
+
+  Widget _floatingActionButton(){
+    if(!this.widget.isAdmin){
+      return null; 
+    }
+    return widget.comprobante.status == EN_REVISION
           ? isAproving
               ? null
               : FloatingActionButton(
@@ -43,9 +51,9 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
                   backgroundColor: Colors.green,
                   child: Icon(Icons.check),
                 )
-          : null,
-    );
+          : null;
   }
+
 
   void handleAprobarComprobante() async {
     setIsAproving(true);
