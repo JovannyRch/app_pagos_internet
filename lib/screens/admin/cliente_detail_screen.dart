@@ -3,6 +3,7 @@ import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/models/user_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ClienteScreenDetail extends StatefulWidget {
   final Usuario cliente;
@@ -85,7 +86,7 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
     );
   }
 
-  Widget _listAction(){
+  Widget _listAction() {
     return Row(
       children: [
         _callAction(),
@@ -95,9 +96,9 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
     );
   }
 
-  Widget _callAction(){
+  Widget _callAction() {
     return RaisedButton(
-      onPressed: handleLauchWhatsApp,
+      onPressed: handleLaunchCall,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18.0),
       ),
@@ -128,6 +129,15 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
   void handleLauchWhatsApp() {
     FlutterOpenWhatsapp.sendSingleMessage(
         formatNumber(widget.cliente.telefono), "Hello");
+  }
+
+  void handleLaunchCall() async {
+    String url = "tel:${widget.cliente.telefono}";
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   String formatNumber(String number) {
