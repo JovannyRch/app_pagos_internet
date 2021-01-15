@@ -4,6 +4,8 @@ const kMainColor =  Color(0xFF504F60);
 
 const kSecondaryColor =  Color(0xFF6C63FF);
 
+const kWhatsAppColor  = Color(0xFF25D366);
+
 const CAMERA = 1;
 const GALLERY = 2;
 

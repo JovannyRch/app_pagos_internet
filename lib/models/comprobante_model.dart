@@ -99,10 +99,14 @@ class Comprobante {
         .toList();
   }
 
-   static Future<List<Comprobante>> getCurrentMonthByUser() async {
+   static Future<List<Comprobante>> getCurrentMonthByCurrentUser() async {
+    return getCurrentMonthByUser(_preferences.email);
+  }
+
+  static Future<List<Comprobante>> getCurrentMonthByUser(String userId) async {
     var now = DateTime.now();
     final resp = await api.getWheres({
-      'userId' : _preferences.email,
+      'userId' : userId,
       'mes' : now.month,
       'anio' : now.year,
     });
@@ -110,6 +114,7 @@ class Comprobante {
         .map((doc) => Comprobante.fromMap(doc.data(), doc.id))
         .toList();
   }
+  
 
   static Future<List<Comprobante>> getByStatus(String status) async {
     final resp = await api.getWhere('status', status);

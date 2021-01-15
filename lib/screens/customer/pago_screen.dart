@@ -48,7 +48,7 @@ class _PagoScreenState extends State<PagoScreen> {
 
   void fetchCurrentComprobante() async {
     setIsLoadingComprobanteActual(true);
-    List<Comprobante> comprobantes = await Comprobante.getCurrentMonthByUser();
+    List<Comprobante> comprobantes = await Comprobante.getCurrentMonthByCurrentUser();
     this.comprobanteMesActual =
         comprobantes.length > 0 ? comprobantes.first : null;
     if (comprobanteMesActual == null) {
