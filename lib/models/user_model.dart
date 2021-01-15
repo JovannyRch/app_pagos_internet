@@ -65,18 +65,19 @@ class Usuario {
 
   static Usuario getIntervalaUser() {
     return new Usuario(
-      username: "Intervala",
+      username: INTERVALA,
       type: "admin",
-      id: EMAIL_INTERVALA
+      id: EMAIL_INTERVALA,
+      proveedor: INTERVALA,
     );
   }
 
   static Usuario getGooginetUser() {
     return new Usuario(
-      username: "Googinet",
-      type: "admin",
-      id: EMAIL_GOOGINET,
-    );
+        username: GOOGINET,
+        type: "admin",
+        id: EMAIL_GOOGINET,
+        proveedor: GOOGINET);
   }
 
   static Usuario loginAdminCredentials(String email, String password) {
@@ -86,5 +87,10 @@ class Usuario {
       return getIntervalaUser();
     }
     return null;
+  }
+
+  static Future<List<Usuario>> getByProvider(String provider) async {
+    final resp = await api.getWhere('proveedor', provider);
+    return resp.docs.map((doc) => Usuario.fromMap(doc.data(), doc.id)).toList();
   }
 }

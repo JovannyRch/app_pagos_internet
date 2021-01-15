@@ -39,7 +39,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
-            label: "Usuarios",
+            label: "Clientes",
           )
         ],
         onTap: (val) {

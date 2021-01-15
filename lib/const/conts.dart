@@ -29,6 +29,9 @@ const PAGADO = "pagado";
 const EMAIL_GOOGINET = "googinet@admin.com";
 const EMAIL_INTERVALA = "intervala@admin.com";
 
+const INTERVALA = "Intervala";
+const GOOGINET = "Googinet";
+
 
 const List<String> ADMIN_USERS = [
     EMAIL_GOOGINET,

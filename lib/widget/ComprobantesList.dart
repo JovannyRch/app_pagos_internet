@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/widget/ComprobanteTile.dart';
+import 'package:pagos_internet/widget/EmtpyData.dart';
 
 class ComprobanteList extends StatefulWidget {
   final String type;
@@ -52,7 +53,7 @@ class _ComprobanteListState extends State<ComprobanteList> {
 
   Widget _columnData() {
     if (comprobantes.length == 0) {
-      return _emtyData();
+      return EmtpyData();
     }
 
     return Container(
@@ -73,26 +74,5 @@ class _ComprobanteListState extends State<ComprobanteList> {
     );
   }
 
-  Widget _emtyData() {
-    return Center(
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FaIcon(
-              FontAwesomeIcons.database,
-              color: kMainColor.withOpacity(0.7),
-            ),
-            SizedBox(height: 10.0),
-            Text(
-              "No se encontraron datos",
-              style: TextStyle(
-                color: kMainColor.withOpacity(0.8),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
+
 }
