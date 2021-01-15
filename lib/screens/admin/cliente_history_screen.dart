@@ -18,7 +18,7 @@ class _ClienteHistoryScreenState extends State<ClienteHistoryScreen> {
       appBar: AppBar(
         backgroundColor: kSecondaryColor,
         title: Text(
-          "Historial de pagos",
+          "Historial",
           overflow: TextOverflow.ellipsis,
         ),
       ),

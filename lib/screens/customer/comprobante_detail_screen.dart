@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/date.dart';
 import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/models/fecha_model.dart';
+import 'package:pagos_internet/widget/CardComprobanteStatus.dart';
+import 'package:pagos_internet/widget/CardDataContainer.dart';
+import 'package:pagos_internet/widget/CardTitle.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 
 class ComprobanteDetailScreen extends StatefulWidget {
@@ -39,21 +43,21 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
     );
   }
 
-  Widget _floatingActionButton(){
-    if(!this.widget.isAdmin){
-      return null; 
+  Widget _floatingActionButton() {
+    if (!this.widget.isAdmin) {
+      return null;
     }
     return widget.comprobante.status == EN_REVISION
-          ? isAproving
-              ? null
-              : FloatingActionButton(
-                  onPressed: handleAprobarComprobante,
-                  backgroundColor: Colors.green,
-                  child: Icon(Icons.check),
-                )
-          : null;
+        ? isAproving
+            ? null
+            : FloatingActionButton.extended(
+                onPressed: handleAprobarComprobante,
+                backgroundColor: Colors.green,
+                icon: Icon(Icons.check),
+                label: Text("Aprobar"),
+              )
+        : null;
   }
-
 
   void handleAprobarComprobante() async {
     setIsAproving(true);
@@ -73,14 +77,42 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _paymentDate(),
-            widget.isAdmin ? _username() : Container(),
-            SizedBox(height: 10.0),
-            _createtAt(),
-            SizedBox(height: 15.0),
-            _rowInfoStatus(),
-            SizedBox(height: 20.0),
-            _image(),
+            widget.isAdmin
+                ? CardDataContainer(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CardTitle(title: "Cliente"),
+                        _username(),
+                      ],
+                    ),
+                  )
+                : Container(),
+            CardDataContainer(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CardTitle(title: "Status"),
+                  CardComprobanteStatus(
+                    year: widget.comprobante.anio,
+                    month: widget.comprobante.mes,
+                    status: widget.comprobante.status,
+                  )
+                ],
+              ),
+            ),
+            CardDataContainer(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CardTitle(title: "Foto del comprobante"),
+                  _image(),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -121,22 +153,20 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
     );
   }
 
-  Widget _paymentDate() {
-    return Text(
-      "${getMonthName(widget.comprobante.mes)} ${widget.comprobante.anio}",
-      style: TextStyle(
-        color: kMainColor.withOpacity(0.9),
-        fontSize: 30.0,
-      ),
-    );
-  }
-
   Widget _createtAt() {
     Fecha fecha = formatDate(widget.comprobante.fecha);
-    return Text(
-      "Enviado el $fecha",
-      style: TextStyle(
-        color: kMainColor.withOpacity(0.7),
+    return Container(
+      margin: EdgeInsets.only(top: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            "Enviado el $fecha",
+            style: TextStyle(
+              color: kMainColor,
+            ),
+          )
+        ],
       ),
     );
   }
@@ -144,7 +174,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   Widget _image() {
     if (widget.comprobante.foto == null) return _emptyPhoto();
     return Container(
-      height: _size.height*0.5,
+      height: _size.height * 0.5,
       width: double.infinity,
       child: PinchZoom(
         image: FadeInImage.assetNetwork(
@@ -158,64 +188,45 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
 
   Widget _emptyPhoto() {
     return Container(
-      child: Text("Sin foto"),
-    );
-  }
-
-  Widget _rowInfoStatus() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _currentMonthStatus(),
-        SizedBox(width: 10.0),
-        Center(child: _labelStatus()),
-      ],
-    );
-  }
-
-  Widget _labelStatus() {
-    const style = TextStyle(
-      color: kMainColor,
-      fontSize: 17.0,
-    );
-    switch (widget.comprobante.status) {
-      case "enRevision":
-        return Text(
-          "En revisión",
-          style: style,
-        );
-      case "noPagado":
-        return Text(
-          "No pagado",
-          style: style,
-        );
-      case "pagado":
-        return Text(
-          "Pagado",
-          style: style,
-        );
-      default:
-        return Text("");
-    }
-  }
-
-  Widget _currentMonthStatus() {
-    return Container(
-      width: 15,
-      height: 15,
-      margin: EdgeInsets.only(top: 20.0),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: kMainColor.withOpacity(0.6),
-            offset: Offset(1, 1),
-            blurRadius: 1.0,
+      height: 100.0,
+      child: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FaIcon(
+            FontAwesomeIcons.image,
+            color: kMainColor.withOpacity(0.7),
           ),
+          SizedBox(height: 20.0),
+          Text(
+            "Sin foto",
+            style: TextStyle(
+              color: kMainColor.withOpacity(0.7),
+              fontSize: 17.0,
+            ),
+          )
         ],
-        color: getBackgroundColorByStatus(widget.comprobante.status),
-      ),
+      )),
     );
   }
 }
+
+/*
+
+    /* Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CardTitle(title: "Detalles del comprobante"),
+                  ,
+            /* widget.isAdmin ? _username() : Container(),
+            SizedBox(height: 10.0),
+            _createtAt(),
+            SizedBox(height: 15.0),
+            _rowInfoStatus(),
+            SizedBox(height: 20.0),
+            _image(), */
+                ],
+              ) */
+
+*/

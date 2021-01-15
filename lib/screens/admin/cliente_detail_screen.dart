@@ -7,6 +7,7 @@ import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/models/user_model.dart';
 import 'package:pagos_internet/screens/admin/cliente_history_screen.dart';
 import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
+import 'package:pagos_internet/widget/CardDataContainer.dart';
 import 'package:pagos_internet/widget/CardTitle.dart';
 import 'package:pagos_internet/widget/LastPayment.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -64,27 +65,18 @@ class _ClienteScreenDetailState extends State<ClienteScreenDetail> {
   }
 
   Widget _cardInfo() {
-    return Container(
-      height: 180.0,
-      width: double.infinity,
-      padding: EdgeInsets.all(15.0),
-      margin: EdgeInsets.only(bottom: 25.0),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _cardTitle("Datos de contacto"),
-          _tileInfoWithIcon(Icons.phone, "${widget.cliente.telefono}",
-              action: _listAction()),
-          _tileInfoWithIcon(Icons.email, "${widget.cliente.id}"),
-          _tileInfoWithIcon(Icons.home, "${widget.cliente.domicilioCompleto}"),
-        ],
-      ),
-    );
+    return CardDataContainer(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _cardTitle("Datos de contacto"),
+        _tileInfoWithIcon(Icons.phone, "${widget.cliente.telefono}",
+            action: _listAction()),
+        _tileInfoWithIcon(Icons.email, "${widget.cliente.id}"),
+        _tileInfoWithIcon(Icons.home, "${widget.cliente.domicilioCompleto}"),
+      ],
+    ));
   }
 
   Widget _listAction() {
