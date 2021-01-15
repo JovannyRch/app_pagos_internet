@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 const kMainColor =  Color(0xFF504F60);
 
-const kSecondaryColor =  Color(0xFF2081E0);
+const kSecondaryColor =  Color(0xFF6C63FF);
 
 const CAMERA = 1;
 const GALLERY = 2;
