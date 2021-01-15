@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pagos_internet/const/conts.dart';
 import 'package:pagos_internet/helpers/storage.dart';
 import 'package:pagos_internet/models/user_model.dart';
+import 'package:pagos_internet/screens/admin/cliente_detail_screen.dart';
 import 'package:pagos_internet/widget/EmtpyData.dart';
 
 class UsuariosAdminScreen extends StatefulWidget {
@@ -85,7 +86,11 @@ class _UsuariosAdminScreenState extends State<UsuariosAdminScreen> {
   }
 
   void handleUserClick(Usuario cliente){
-    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ClienteScreenDetail(cliente: cliente))
+    );
   }
 
   Widget _emptyData() {
