@@ -22,13 +22,13 @@ dependencies:
   shared_preferences: ^0.5.12+4
   http: ^0.12.2
   http_parser: ^3.1.4
-  compressimage: ^0.1.1
   image_picker: ^0.6.7+21
   mime_type: ^0.3.2
   loading_button: ^0.0.3+1
   pinch_zoom: ^0.0.4
   flutter_open_whatsapp: ^0.1.2
   url_launcher: ^5.7.10
+  pull_to_refresh: ^1.6.3
 
 dev_dependencies:
   flutter_test:

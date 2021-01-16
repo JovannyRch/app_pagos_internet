@@ -277,6 +277,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       handleRegister();
     } catch (e) {
       showLoginErrorAlert();
+    } finally {
       setCheckingUser(false);
     }
   }
@@ -321,6 +322,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     } catch (e) {
       handleErrorRegister(e);
+      setCheckingUser(false);
     }
   }
 
@@ -350,8 +352,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void handleErrorRegister(e) {
-    print("Error");
-    print(e.toString());
+    Widget cancelButton = FlatButton(
+      child: Text("Entendido"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Error de registro"),
+      content: Text(
+          "Ocurrió un error al crear el registro de usuario, por favor intente de nuevo"),
+      actions: [
+        cancelButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
     setState(() {
       setCheckingUser(false);
     });

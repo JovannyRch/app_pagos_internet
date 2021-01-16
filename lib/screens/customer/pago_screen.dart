@@ -48,10 +48,10 @@ class _PagoScreenState extends State<PagoScreen> {
 
   void fetchCurrentComprobante() async {
     setIsLoadingComprobanteActual(true);
-    this.comprobanteMesActual = await Comprobante.getCurrentMonthByCurrentUser(); 
+    this.comprobanteMesActual =
+        await Comprobante.getCurrentMonthByCurrentUser();
     setIsLoadingComprobanteActual(false);
   }
-
 
   void setIseUploadingPhoto(bool val) {
     setState(() {
@@ -228,11 +228,10 @@ class _PagoScreenState extends State<PagoScreen> {
     Comprobante comprobante = new Comprobante();
     DateTime now = DateTime.now();
     String photoUrl = await _getSource(userSourcePhotoOption);
-  /*   String photoUrl =
+    /*   String photoUrl =
         "https://res.cloudinary.com/jovannyrch/image/upload/v1610467708/jumbtsjyuo4ccjjjeqko.jpg"; */
     setIsUploadingComprobante(true);
     if (photoUrl.isNotEmpty) {
-      
       comprobante.foto = photoUrl;
       comprobante.anio = now.year;
       comprobante.mes = now.month;
@@ -273,10 +272,10 @@ class _PagoScreenState extends State<PagoScreen> {
       url = await subirImagen(pickedFile);
     } catch (e) {
       showErrorUploadingPhoto();
-    }finally{
+    } finally {
       setIseUploadingPhoto(false);
     }
-    
+
     return url;
   }
 
@@ -319,12 +318,24 @@ class _PagoScreenState extends State<PagoScreen> {
 
   Widget _titleCard() {
     return Container(
-        child: Text(
-      comprobanteMesActual.proveedor,
-      style: TextStyle(
-        color: kMainColor.withOpacity(0.45),
-        fontSize: 20.0,
-      ),
+        child: Row(
+      children: [
+        Expanded(
+          child: Text(
+            comprobanteMesActual.proveedor,
+            style: TextStyle(
+              color: kMainColor.withOpacity(0.65),
+              fontSize: 20.0,
+            ),
+          ),
+        ),
+        IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color: Colors.grey.shade500,
+            ),
+            onPressed: fetchCurrentComprobante),
+      ],
     ));
   }
 

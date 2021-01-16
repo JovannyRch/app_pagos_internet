@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     _size = MediaQuery.of(context).size;
     _globalContext = context;
     return Scaffold(
@@ -250,6 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Storage.saveUser(usuario);
           Navigator.pushReplacementNamed(context, HomeCustumer.routeName);
         } else {
+          setCheckingUser(false);
           showNoUserFoundedMessage();
         }
       } else {
@@ -261,7 +263,29 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void showNoUserFoundedMessage() {
-    showSnackBarMessage("Usuario no encontrado", _key);
+    Widget cancelButton = FlatButton(
+      child: Text("Entendido"),
+      onPressed: () {
+        Navigator.of(context).pop(); 
+      },
+    );
+  
+  
+    AlertDialog alert = AlertDialog(
+      title: Text("Credenciales no econtradas"),
+      content: Text(
+          "El usuario no fue encontrado, por favor revise sus credenciales"),
+      actions: [
+        cancelButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   Usuario checkIfAdminUser() {

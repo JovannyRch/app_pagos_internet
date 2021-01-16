@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pagos_internet/const/conts.dart';
-import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
-import 'package:pagos_internet/screens/customer/comprobante_detail_screen.dart';
 import 'package:pagos_internet/widget/ComprobanteTile.dart';
 
 class HistorialScreen extends StatefulWidget {
