@@ -227,9 +227,9 @@ class _PagoScreenState extends State<PagoScreen> {
   void sendComprobante(int userSourcePhotoOption) async {
     Comprobante comprobante = new Comprobante();
     DateTime now = DateTime.now();
-    // String photoUrl = await _getSource(userSourcePhotoOption);
-    String photoUrl =
-        "https://res.cloudinary.com/jovannyrch/image/upload/v1610467708/jumbtsjyuo4ccjjjeqko.jpg";
+    String photoUrl = await _getSource(userSourcePhotoOption);
+  /*   String photoUrl =
+        "https://res.cloudinary.com/jovannyrch/image/upload/v1610467708/jumbtsjyuo4ccjjjeqko.jpg"; */
     setIsUploadingComprobante(true);
     if (photoUrl.isNotEmpty) {
       

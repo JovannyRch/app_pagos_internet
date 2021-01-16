@@ -42,34 +42,20 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
         title: Text(widget.comprobante.proveedor),
       ),
       body: _body(),
-      floatingActionButton: _floatingActionButton(),
+      
     );
   }
 
-  Widget _floatingActionButton() {
-    if (this.widget.isAdmin) {
-      return null;
-    }
-    return widget.comprobante.status == EN_REVISION
-        ? isAproving
-            ? null
-            : FloatingActionButton.extended(
-                onPressed: handleAprobarComprobante,
-                backgroundColor: Colors.green,
-                icon: Icon(Icons.check),
-                label: Text("Aprobar"),
-              )
-        : null;
-  }
 
   void handleAprobarComprobante() async {
-    // set up the buttons
+  
     Widget cancelButton = FlatButton(
       child: Text("Cancelar"),
       onPressed: () {
         Navigator.of(context).pop(); 
       },
     );
+  
     Widget continueButton = FlatButton(
       child: Text("Aprobar"),
       onPressed: () {
@@ -77,7 +63,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
         aprobarComprobante();
       },
     );
-    // set up the AlertDialog
+  
     AlertDialog alert = AlertDialog(
       title: Text("Confirmación"),
       content: Text(
@@ -300,23 +286,3 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
     );
   }
 }
-
-/*
-
-    /* Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CardTitle(title: "Detalles del comprobante"),
-                  ,
-            /* widget.isAdmin ? _username() : Container(),
-            SizedBox(height: 10.0),
-            _createdAt(),
-            SizedBox(height: 15.0),
-            _rowInfoStatus(),
-            SizedBox(height: 20.0),
-            _image(), */
-                ],
-              ) */
-
-*/
