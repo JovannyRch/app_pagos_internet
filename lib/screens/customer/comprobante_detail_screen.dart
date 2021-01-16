@@ -1,8 +1,11 @@
+
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:loading_button/loading_button.dart';
 import 'package:pagos_internet/const/conts.dart';
+import 'package:pagos_internet/helpers/alerts.dart';
 import 'package:pagos_internet/helpers/date.dart';
-import 'package:pagos_internet/helpers/months.dart';
 import 'package:pagos_internet/models/comprobante_model.dart';
 import 'package:pagos_internet/models/fecha_model.dart';
 import 'package:pagos_internet/widget/CardComprobanteStatus.dart';
@@ -44,7 +47,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   }
 
   Widget _floatingActionButton() {
-    if (!this.widget.isAdmin) {
+    if (this.widget.isAdmin) {
       return null;
     }
     return widget.comprobante.status == EN_REVISION
@@ -60,9 +63,44 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   }
 
   void handleAprobarComprobante() async {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancelar"),
+      onPressed: () {
+        Navigator.of(context).pop(); 
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Aprobar"),
+      onPressed: () {
+        Navigator.of(context).pop(); 
+        aprobarComprobante();
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Confirmación"),
+      content: Text(
+          "¿Estás seguro de aprobar el comprobante?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void aprobarComprobante() async {
     setIsAproving(true);
     await this.widget.comprobante.aprobar();
     setIsAproving(false);
+    await success(context, "Comprobante aprobado", "El comprobante se ha aprobado con éxito");
   }
 
   Widget _body() {
@@ -110,7 +148,10 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CardTitle(title: "Foto del comprobante"),
+                  _adminActions(),
+                  SizedBox(height: 10.0),
                   _image(),
+                  _createdAt(),
                 ],
               ),
             ),
@@ -154,17 +195,20 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
     );
   }
 
-  Widget _createtAt() {
+  Widget _createdAt() {
+    if (isEmptyPhoto()) return Container();
+
     Fecha fecha = formatDate(widget.comprobante.fecha);
     return Container(
-      margin: EdgeInsets.only(top: 10.0),
+      margin: EdgeInsets.only(top: 20.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
             "Enviado el $fecha",
             style: TextStyle(
               color: kMainColor,
+              fontSize: 10.0,
             ),
           )
         ],
@@ -178,7 +222,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
     return Container(
       height: _size.height * 0.5,
       width: double.infinity,
-      decoration: BoxDecoration(border: Border.all(color: Colors.red)),
+      /*  decoration: BoxDecoration(border: Border.all(color: Colors.red)), */
       child: PinchZoom(
         image: FadeInImage.assetNetwork(
             placeholder: "assets/loader.gif", image: widget.comprobante.foto),
@@ -213,6 +257,48 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
       )),
     );
   }
+
+  bool isEmptyPhoto() {
+    return (widget.comprobante.foto == null) || widget.comprobante.foto.isEmpty;
+  }
+
+  bool isNotAdmin() {
+    return !widget.isAdmin;
+  }
+
+  bool isNotEnChecking() {
+    return widget.comprobante.status != EN_REVISION;
+  }
+
+  Widget _adminActions() {
+    if (isNotAdmin() || isNotEnChecking() || isEmptyPhoto()) return Container();
+
+    if (isAproving) {
+      return Text("Aprobando");
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        LoadingButton(
+          backgroundColor: Colors.green,
+          isLoading: isAproving,
+          onPressed: handleAprobarComprobante,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.check, color: Colors.white, size: 18.0),
+              SizedBox(width: 10.0),
+              Text(
+                "Aprobar",
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
 }
 
 /*
@@ -225,7 +311,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
                   ,
             /* widget.isAdmin ? _username() : Container(),
             SizedBox(height: 10.0),
-            _createtAt(),
+            _createdAt(),
             SizedBox(height: 15.0),
             _rowInfoStatus(),
             SizedBox(height: 20.0),

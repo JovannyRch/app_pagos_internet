@@ -14,10 +14,13 @@ class LastPaymentInfo extends StatefulWidget {
 
 class _LastPaymentInfoState extends State<LastPaymentInfo> {
   bool isFetchingCurrentMonthPayment = false;
-  Comprobante currentMonthPayment;
+  Comprobante currentMonthPayment  = new Comprobante();
 
   @override
   void initState() {
+    this.currentMonthPayment.status = "";
+    this.currentMonthPayment.mes = 1;
+    this.currentMonthPayment.anio= 1;
     this.fetchCurrentMonthPayment();
     super.initState();
   }
