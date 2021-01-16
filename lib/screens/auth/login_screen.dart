@@ -55,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             width: double.infinity,
+            height: _size.height,
             child: _body(),
           ),
         ),
@@ -110,7 +111,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _logo() {
-    return Container(
+
+      return Container(
+      padding: EdgeInsets.only(top: _size.height * 0.06),
+      child: Image.asset(
+        'assets/logo.png',
+        width: _size.width * 0.5,
+      ),
+    );
+   /*  return Container(
       child: Text(
         "Pagos de internet",
         style: TextStyle(
@@ -120,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
           color: kMainColor,
         ),
       ),
-    );
+    ); */
   }
 
   Widget _image() {
@@ -128,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.only(top: _size.height * 0.06),
       child: Image.asset(
         'assets/auth-image.png',
-        width: _size.width * 0.45,
+        width: _size.width * 0.35,
       ),
     );
   }

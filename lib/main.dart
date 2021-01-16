@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pagos Internet',
+      title: 'NetPay - Pagos de Internet',
       debugShowCheckedModeBanner: false,
       initialRoute: initialRoute,
       routes: routes,
