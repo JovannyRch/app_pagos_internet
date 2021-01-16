@@ -78,6 +78,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
           ), */
           SizedBox(height: 20.0),
           SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: renderDataOrLoading(),
           )
         ],

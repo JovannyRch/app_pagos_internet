@@ -46,6 +46,7 @@ class _HomeCustumerState extends State<HomeCustumer> {
   Widget _body() {
     return Container(
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

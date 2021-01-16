@@ -62,6 +62,7 @@ class _UsuariosAdminScreenState extends State<UsuariosAdminScreen> {
     return Container(
       padding: EdgeInsets.all(10.0),
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           children: [
             ...clientes.map((e) => _userCard(e)).toList(),

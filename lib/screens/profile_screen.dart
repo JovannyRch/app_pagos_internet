@@ -33,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       height: _size.height,
       width: _size.width,
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           children: [
             _saludo(),

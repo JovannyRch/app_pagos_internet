@@ -73,6 +73,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
     return Container(
       padding: EdgeInsets.all(15.0),
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -172,10 +173,12 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
   }
 
   Widget _image() {
-    if (widget.comprobante.foto == null) return _emptyPhoto();
+    if ((widget.comprobante.foto == null) || widget.comprobante.foto.isEmpty)
+      return _emptyPhoto();
     return Container(
       height: _size.height * 0.5,
       width: double.infinity,
+      decoration: BoxDecoration(border: Border.all(color: Colors.red)),
       child: PinchZoom(
         image: FadeInImage.assetNetwork(
             placeholder: "assets/loader.gif", image: widget.comprobante.foto),
@@ -188,7 +191,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
 
   Widget _emptyPhoto() {
     return Container(
-      height: 100.0,
+      height: 150.0,
       child: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -203,6 +206,7 @@ class _ComprobanteDetailScreenState extends State<ComprobanteDetailScreen> {
             style: TextStyle(
               color: kMainColor.withOpacity(0.7),
               fontSize: 17.0,
+              letterSpacing: 1.2,
             ),
           )
         ],
